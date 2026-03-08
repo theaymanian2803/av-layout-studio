@@ -178,6 +178,31 @@ export const AdminLandingPage = () => {
                 <Label>Title</Label>
                 <Input value={newSection.title} onChange={(e) => setNewSection((p) => ({ ...p, title: e.target.value }))} placeholder="e.g. 📱 Smartphones" />
               </div>
+              {newSection.type === "custom_banner" && (
+                <>
+                  <div>
+                    <Label>Subtitle</Label>
+                    <Input value={newSection.subtitle} onChange={(e) => setNewSection((p) => ({ ...p, subtitle: e.target.value }))} placeholder="Optional description text" />
+                  </div>
+                  <div>
+                    <Label>Background Image URL</Label>
+                    <Input value={newSection.image_url} onChange={(e) => setNewSection((p) => ({ ...p, image_url: e.target.value }))} placeholder="https://images.unsplash.com/..." />
+                    {newSection.image_url && (
+                      <img src={newSection.image_url} alt="Preview" className="mt-2 h-20 w-auto rounded-lg object-cover border" />
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>CTA Button Text</Label>
+                      <Input value={newSection.cta_text} onChange={(e) => setNewSection((p) => ({ ...p, cta_text: e.target.value }))} placeholder="Shop Now" />
+                    </div>
+                    <div>
+                      <Label>CTA Link</Label>
+                      <Input value={newSection.cta_link} onChange={(e) => setNewSection((p) => ({ ...p, cta_link: e.target.value }))} placeholder="/catalog" />
+                    </div>
+                  </div>
+                </>
+              )}
               {newSection.type === "product_row" && (
                 <div>
                   <Label>Category</Label>
