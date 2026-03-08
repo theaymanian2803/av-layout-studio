@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users, BarChart3, Percent, Upload } from "lucide-react";
+import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users, BarChart3, Percent, Upload, Gift } from "lucide-react";
 import { motion } from "framer-motion";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
@@ -15,6 +15,7 @@ import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminCoupons } from "@/components/admin/AdminCoupons";
 import { AdminBulkImport } from "@/components/admin/AdminBulkImport";
+import { AdminPromoPopup } from "@/components/admin/AdminPromoPopup";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -63,6 +64,7 @@ const Admin = () => {
               <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" /> Users</TabsTrigger>
               <TabsTrigger value="coupons"><Percent className="h-4 w-4 mr-2" /> Coupons</TabsTrigger>
               <TabsTrigger value="import"><Upload className="h-4 w-4 mr-2" /> Import</TabsTrigger>
+              <TabsTrigger value="popup"><Gift className="h-4 w-4 mr-2" /> Popup</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard"><AdminDashboard /></TabsContent>
@@ -75,6 +77,7 @@ const Admin = () => {
             <TabsContent value="users"><AdminUsers /></TabsContent>
             <TabsContent value="coupons"><AdminCoupons /></TabsContent>
             <TabsContent value="import"><AdminBulkImport /></TabsContent>
+            <TabsContent value="popup"><AdminPromoPopup /></TabsContent>
           </Tabs>
         </motion.div>
       </div>

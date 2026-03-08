@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { CartSidebar } from "@/components/layout/CartSidebar";
 import { Footer } from "@/components/layout/Footer";
+import { PromoPopup } from "@/components/PromoPopup";
 import { useTheme } from "@/hooks/useTheme";
 import { createContext } from "react";
 import Index from "./pages/Index";
@@ -41,6 +42,7 @@ const AppInner = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
         <CartSidebar />
+        <PromoPopup />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/catalog" element={<Catalog />} />
