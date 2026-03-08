@@ -7,7 +7,7 @@ import { useLandingSections } from "@/hooks/useLandingSections";
 export const PromoPopup = () => {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const { data: sections = [] } = useLandingSections();
+  const { data: sections = [], isLoading } = useLandingSections();
 
   const popupSection = sections.find(
     (s) => (s.config as any)?.type === "promo_popup" && s.visible
@@ -18,13 +18,14 @@ export const PromoPopup = () => {
   const couponCode = config?.coupon_code || "SAVE10";
   const title = popupSection?.title || "Special Offer!";
   const subtitle = popupSection?.subtitle || "Use this coupon for an exclusive discount";
-  const dismissed = sessionStorage.getItem("promo_popup_dismissed");
 
   useEffect(() => {
-    if (!popupSection || dismissed) return;
+    if (!popupSection || isLoading) return;
+    const dismissed = sessionStorage.getItem("promo_popup_dismissed");
+    if (dismissed) return;
     const timer = setTimeout(() => setOpen(true), delay);
     return () => clearTimeout(timer);
-  }, [popupSection, delay, dismissed]);
+  }, [popupSection, delay, isLoading]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(couponCode);
