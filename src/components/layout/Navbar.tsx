@@ -244,6 +244,11 @@ export const Navbar = () => {
         {/* Right actions */}
         <div className="flex items-center gap-1">
           <ThemeToggle />
+          {user && (
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/favorites"><Heart className="h-5 w-5" /></Link>
+            </Button>
+          )}
           {user ? (
             <Button variant="ghost" size="icon" asChild>
               <Link to="/account"><User className="h-5 w-5" /></Link>
