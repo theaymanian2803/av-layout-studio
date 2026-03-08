@@ -258,6 +258,10 @@ const Checkout = () => {
 
       // COD — done immediately
       if (paymentMethod === "cod") {
+        // Send confirmation email (fire-and-forget)
+        supabase.functions.invoke("send-order-email", {
+          body: { order_id: order.id },
+        }).catch(err => console.error("Email send error:", err));
         setOrderId(order.id);
         setPlaced(true);
         clearCart();
