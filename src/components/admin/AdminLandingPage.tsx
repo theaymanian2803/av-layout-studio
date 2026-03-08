@@ -313,7 +313,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Hero Headline</Label>
                                 <Input
                                   value={(editForm.config as any)?.headline || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, headline: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", headline: e.target.value } }))}
                                   placeholder="e.g. Discover Amazing Tech"
                                   className="h-8 text-sm"
                                 />
@@ -322,7 +322,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Hero Description</Label>
                                 <Input
                                   value={(editForm.config as any)?.description || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, description: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", description: e.target.value } }))}
                                   placeholder="Short description text"
                                   className="h-8 text-sm"
                                 />
@@ -332,7 +332,7 @@ export const AdminLandingPage = () => {
                                   <Label className="text-xs">CTA Button Text</Label>
                                   <Input
                                     value={(editForm.config as any)?.cta_text || ""}
-                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_text: e.target.value } }))}
+                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", cta_text: e.target.value } }))}
                                     placeholder="Shop Now"
                                     className="h-8 text-sm"
                                   />
@@ -341,7 +341,7 @@ export const AdminLandingPage = () => {
                                   <Label className="text-xs">CTA Link URL</Label>
                                   <Input
                                     value={(editForm.config as any)?.cta_link || ""}
-                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_link: e.target.value } }))}
+                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", cta_link: e.target.value } }))}
                                     placeholder="/catalog"
                                     className="h-8 text-sm"
                                   />
@@ -351,7 +351,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Hero Image URL (overrides product image)</Label>
                                 <Input
                                   value={(editForm.config as any)?.hero_image || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, hero_image: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", hero_image: e.target.value } }))}
                                   placeholder="https://images.unsplash.com/..."
                                   className="h-8 text-sm"
                                 />
@@ -363,7 +363,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Featured Product IDs (comma-separated, or leave empty for auto)</Label>
                                 <Input
                                   value={(editForm.config as any)?.product_ids || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, product_ids: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", product_ids: e.target.value } }))}
                                   placeholder="prod-001, prod-002"
                                   className="h-8 text-sm"
                                 />
