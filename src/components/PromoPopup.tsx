@@ -100,7 +100,7 @@ export const PromoPopup = () => {
                 <motion.p
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-green-500 font-medium mb-4"
+                  className="text-sm text-accent font-medium mb-4"
                 >
                   Copied to clipboard!
                 </motion.p>
