@@ -57,7 +57,7 @@ export const FeaturedBrandSection = () => {
                 <div className="p-3">
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{p.subcategory}</p>
                   <p className="text-sm font-semibold truncate mt-0.5">{p.name}</p>
-                  <span className="text-accent font-bold text-sm">${p.price.toLocaleString()}</span>
+                  <span className="text-accent font-bold text-sm">${(p.price ?? 0).toLocaleString()}</span>
                 </div>
               </Link>
             </motion.div>
