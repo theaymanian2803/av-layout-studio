@@ -38,7 +38,8 @@ export const Navbar = () => {
   const { categories, brands, subcategories } = useBrandsAndCategories();
   const { data: products = [] } = useProducts();
   const { wishlistIds } = useWishlist();
-  const wishlistCount = wishlistIds?.data?.length ?? 0;
+  const wishlistCount = wishlistIds?.length ?? 0;
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
