@@ -15,6 +15,7 @@ import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminCoupons } from "@/components/admin/AdminCoupons";
 import { AdminBulkImport } from "@/components/admin/AdminBulkImport";
+import { AdminPromoPopup } from "@/components/admin/AdminPromoPopup";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
