@@ -53,6 +53,45 @@ export type Database = {
         }
         Relationships: []
       }
+      landing_sections: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          image_url: string | null
+          section_key: string
+          sort_order: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          section_key: string
+          sort_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          section_key?: string
+          sort_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           id: string
