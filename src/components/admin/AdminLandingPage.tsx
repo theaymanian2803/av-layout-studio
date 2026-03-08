@@ -28,6 +28,7 @@ const sectionTypeLabels: Record<string, string> = {
   product_row: "Product Row",
   brands_strip: "Brands Strip",
   featured_brand: "Featured Brand Tabs",
+  custom_banner: "Custom Banner",
 };
 
 const sectionTypeIcons: Record<string, string> = {
@@ -37,6 +38,7 @@ const sectionTypeIcons: Record<string, string> = {
   product_row: "📦",
   brands_strip: "🏷️",
   featured_brand: "⭐",
+  custom_banner: "🖼️",
 };
 
 export const AdminLandingPage = () => {
@@ -49,7 +51,7 @@ export const AdminLandingPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<LandingSection>>({});
   const [addOpen, setAddOpen] = useState(false);
-  const [newSection, setNewSection] = useState({ title: "", type: "product_row", category: "" });
+  const [newSection, setNewSection] = useState({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "" });
 
   const handleToggleVisibility = (section: LandingSection) => {
     updateMutation.mutate(
@@ -95,20 +97,27 @@ export const AdminLandingPage = () => {
   };
 
   const handleAdd = () => {
-    const key = `product_row_${newSection.category.toLowerCase().replace(/\s+/g, "_")}_${Date.now()}`;
+    const key = `${newSection.type}_${Date.now()}`;
+    const config: Record<string, any> = { type: newSection.type };
+    if (newSection.category) config.category = newSection.category;
+    if (newSection.cta_text) config.cta_text = newSection.cta_text;
+    if (newSection.cta_link) config.cta_link = newSection.cta_link;
+
     addMutation.mutate(
       {
         section_key: key,
         title: newSection.title,
+        subtitle: newSection.subtitle || "",
+        image_url: newSection.image_url || "",
         sort_order: sections.length,
         visible: true,
-        config: { type: newSection.type, ...(newSection.category ? { category: newSection.category } : {}) },
+        config,
       } as any,
       {
         onSuccess: () => {
           toast.success("Section added");
           setAddOpen(false);
-          setNewSection({ title: "", type: "product_row", category: "" });
+          setNewSection({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "" });
         },
       }
     );
@@ -169,6 +178,31 @@ export const AdminLandingPage = () => {
                 <Label>Title</Label>
                 <Input value={newSection.title} onChange={(e) => setNewSection((p) => ({ ...p, title: e.target.value }))} placeholder="e.g. 📱 Smartphones" />
               </div>
+              {newSection.type === "custom_banner" && (
+                <>
+                  <div>
+                    <Label>Subtitle</Label>
+                    <Input value={newSection.subtitle} onChange={(e) => setNewSection((p) => ({ ...p, subtitle: e.target.value }))} placeholder="Optional description text" />
+                  </div>
+                  <div>
+                    <Label>Background Image URL</Label>
+                    <Input value={newSection.image_url} onChange={(e) => setNewSection((p) => ({ ...p, image_url: e.target.value }))} placeholder="https://images.unsplash.com/..." />
+                    {newSection.image_url && (
+                      <img src={newSection.image_url} alt="Preview" className="mt-2 h-20 w-auto rounded-lg object-cover border" />
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>CTA Button Text</Label>
+                      <Input value={newSection.cta_text} onChange={(e) => setNewSection((p) => ({ ...p, cta_text: e.target.value }))} placeholder="Shop Now" />
+                    </div>
+                    <div>
+                      <Label>CTA Link</Label>
+                      <Input value={newSection.cta_link} onChange={(e) => setNewSection((p) => ({ ...p, cta_link: e.target.value }))} placeholder="/catalog" />
+                    </div>
+                  </div>
+                </>
+              )}
               {newSection.type === "product_row" && (
                 <div>
                   <Label>Category</Label>
@@ -285,6 +319,28 @@ export const AdminLandingPage = () => {
                                   ))}
                                 </SelectContent>
                               </Select>
+                            </div>
+                          )}
+                          {sectionType === "custom_banner" && (
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label className="text-xs">CTA Button Text</Label>
+                                <Input
+                                  value={(editForm.config as any)?.cta_text || ""}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_text: e.target.value } }))}
+                                  placeholder="Shop Now"
+                                  className="h-8 text-sm"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-xs">CTA Link URL</Label>
+                                <Input
+                                  value={(editForm.config as any)?.cta_link || ""}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_link: e.target.value } }))}
+                                  placeholder="/catalog?brand=Sony"
+                                  className="h-8 text-sm"
+                                />
+                              </div>
                             </div>
                           )}
                           <div className="flex gap-2">

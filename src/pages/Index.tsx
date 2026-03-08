@@ -4,6 +4,7 @@ import { ProductRow } from "@/components/landing/ProductRow";
 import { BrandsStrip } from "@/components/landing/BrandsStrip";
 import { FeaturedBrandSection } from "@/components/landing/FeaturedBrandSection";
 import { PromoBanner } from "@/components/landing/PromoBanner";
+import { CustomBanner } from "@/components/landing/CustomBanner";
 import { useLandingSections, LandingSection } from "@/hooks/useLandingSections";
 import { Loader2 } from "lucide-react";
 
@@ -24,6 +25,8 @@ const SectionRenderer = ({ section }: { section: LandingSection }) => {
       return <BrandsStrip />;
     case "featured_brand":
       return <FeaturedBrandSection />;
+    case "custom_banner":
+      return <CustomBanner section={section} />;
     default:
       return null;
   }
