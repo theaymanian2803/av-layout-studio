@@ -415,15 +415,29 @@ const Checkout = () => {
         {/* Order Summary */}
         <div className="md:col-span-2">
           <div className="rounded-lg border bg-card p-5 sticky top-20">
-            <h2 className="font-semibold mb-4">Order Summary</h2>
-            <div className="space-y-2 mb-4">
+            <h2 className="font-semibold mb-4">Your Items ({items.length})</h2>
+            
+            {/* Product cards with images */}
+            <div className="space-y-3 mb-4 max-h-[300px] overflow-y-auto pr-1">
               {items.map(item => (
-                <div key={item.product.id} className="flex justify-between text-sm">
-                  <span className="truncate mr-2">{item.product.name} ×{item.quantity}</span>
-                  <span>${(item.product.price * item.quantity).toLocaleString()}</span>
+                <div key={item.product.id} className="flex gap-3 p-2 rounded-lg bg-muted/30">
+                  <img 
+                    src={item.product.image} 
+                    alt={item.product.name} 
+                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium line-clamp-2">{item.product.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.product.brand}</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-muted-foreground">Qty: {item.quantity}</span>
+                      <span className="text-sm font-semibold">${(item.product.price * item.quantity).toLocaleString()}</span>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
+            
             <Separator className="my-3" />
             <div className="flex justify-between text-sm"><span>Subtotal</span><span>${totalPrice.toLocaleString()}</span></div>
             <div className="flex justify-between text-sm text-muted-foreground"><span>Shipping</span><span>Free</span></div>
