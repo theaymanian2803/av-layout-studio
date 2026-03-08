@@ -38,6 +38,7 @@ export const Navbar = () => {
   const { data: isAdmin } = useIsAdmin();
   const { categories, brands, subcategories } = useBrandsAndCategories();
   const { data: products = [] } = useProducts();
+  const { data: sections = [] } = useLandingSections();
   const { wishlistIds } = useWishlist();
   const wishlistCount = wishlistIds?.length ?? 0;
   const navigate = useNavigate();
