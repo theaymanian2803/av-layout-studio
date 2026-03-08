@@ -75,6 +75,7 @@ const Admin = () => {
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="import" element={<AdminBulkImport />} />
                 <Route path="popup" element={<AdminPromoPopup />} />
+                <Route path="megamenu" element={<AdminMegaMenu />} />
               </Routes>
             </motion.div>
           </main>
