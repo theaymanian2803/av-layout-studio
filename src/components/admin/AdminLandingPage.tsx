@@ -351,7 +351,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Hero Image URL (overrides product image)</Label>
                                 <Input
                                   value={(editForm.config as any)?.hero_image || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, hero_image: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", hero_image: e.target.value } }))}
                                   placeholder="https://images.unsplash.com/..."
                                   className="h-8 text-sm"
                                 />
