@@ -28,6 +28,7 @@ const sectionTypeLabels: Record<string, string> = {
   product_row: "Product Row",
   brands_strip: "Brands Strip",
   featured_brand: "Featured Brand Tabs",
+  custom_banner: "Custom Banner",
 };
 
 const sectionTypeIcons: Record<string, string> = {
@@ -37,6 +38,7 @@ const sectionTypeIcons: Record<string, string> = {
   product_row: "📦",
   brands_strip: "🏷️",
   featured_brand: "⭐",
+  custom_banner: "🖼️",
 };
 
 export const AdminLandingPage = () => {
