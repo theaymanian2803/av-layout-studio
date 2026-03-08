@@ -24,6 +24,13 @@ async function getAccessToken(): Promise<string> {
   return data.access_token;
 }
 
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,20 +38,25 @@ Deno.serve(async (req) => {
 
   try {
     // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return jsonResponse({ error: "Unauthorized" }, 401);
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: req.headers.get("Authorization")! } } }
+      { global: { headers: { Authorization: authHeader } } }
     );
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return jsonResponse({ error: "Unauthorized" }, 401);
     }
 
-    const { action, order_id, amount, currency = "USD" } = await req.json();
+    const userId = claimsData.claims.sub as string;
+    const { action, order_id, amount, currency = "USD", return_url, cancel_url } = await req.json();
     const accessToken = await getAccessToken();
 
     if (action === "create-order") {
@@ -60,24 +72,38 @@ Deno.serve(async (req) => {
             {
               amount: {
                 currency_code: currency,
-                value: String(amount),
+                value: String(Number(amount).toFixed(2)),
               },
             },
           ],
+          payment_source: {
+            paypal: {
+              experience_context: {
+                return_url: return_url || "https://example.com/checkout?paypal=success",
+                cancel_url: cancel_url || "https://example.com/checkout?paypal=cancel",
+                user_action: "PAY_NOW",
+                brand_name: "AVStore",
+              },
+            },
+          },
         }),
       });
       const data = await res.json();
-      return new Response(JSON.stringify(data), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+
+      // Extract approval URL
+      const approveLink = data.links?.find((l: any) => l.rel === "approve" || l.rel === "payer-action");
+
+      return jsonResponse({
+        id: data.id,
+        status: data.status,
+        approve_url: approveLink?.href || null,
+        raw: data,
       });
     }
 
     if (action === "capture-order") {
       if (!order_id) {
-        return new Response(JSON.stringify({ error: "order_id is required" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return jsonResponse({ error: "order_id is required" }, 400);
       }
       const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${order_id}/capture`, {
         method: "POST",
@@ -87,19 +113,15 @@ Deno.serve(async (req) => {
         },
       });
       const data = await res.json();
-      return new Response(JSON.stringify(data), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return jsonResponse({
+        id: data.id,
+        status: data.status,
+        raw: data,
       });
     }
 
-    return new Response(JSON.stringify({ error: "Invalid action. Use 'create-order' or 'capture-order'" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Invalid action. Use 'create-order' or 'capture-order'" }, 400);
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: err.message }, 500);
   }
 });

@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet, MapPin, CreditCard } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet, MapPin, CreditCard, XCircle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -41,10 +41,12 @@ const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [placed, setPlaced] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("paypal");
+  const captureAttempted = useRef(false);
 
   // Saved data
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
@@ -57,6 +59,55 @@ const Checkout = () => {
   });
 
   const updateField = (field: string, value: string) => setForm(p => ({ ...p, [field]: value }));
+
+  // Handle PayPal return — capture the order
+  useEffect(() => {
+    const paypalToken = searchParams.get("token");
+    const paypalStatus = searchParams.get("paypal");
+
+    if (paypalStatus === "cancel") {
+      toast.error("PayPal payment was cancelled.");
+      return;
+    }
+
+    if (paypalToken && !captureAttempted.current) {
+      captureAttempted.current = true;
+      const pendingOrderId = sessionStorage.getItem("pending_order_id");
+
+      const capturePayment = async () => {
+        setSubmitting(true);
+        try {
+          const { data, error } = await supabase.functions.invoke("paypal", {
+            body: { action: "capture-order", order_id: paypalToken },
+          });
+
+          if (error) throw new Error(error.message);
+
+          if (data?.status === "COMPLETED") {
+            // Update order status
+            if (pendingOrderId) {
+              await supabase.from("orders").update({ status: "paid" }).eq("id", pendingOrderId);
+            }
+            setOrderId(pendingOrderId);
+            setPlaced(true);
+            clearCart();
+            sessionStorage.removeItem("pending_order_id");
+            sessionStorage.removeItem("pending_cart");
+            toast.success("Payment successful!");
+          } else {
+            toast.error("Payment could not be completed. Please try again.");
+          }
+        } catch (err: any) {
+          console.error("PayPal capture error:", err);
+          toast.error(err.message || "Failed to capture PayPal payment.");
+        } finally {
+          setSubmitting(false);
+        }
+      };
+
+      capturePayment();
+    }
+  }, [searchParams, clearCart]);
 
   // Fetch saved addresses & payment methods
   useEffect(() => {
@@ -74,14 +125,12 @@ const Checkout = () => {
       setSavedAddresses(addresses);
       setSavedPayments(payments);
 
-      // Auto-select default address
       const defaultAddr = addresses.find(a => a.is_default) || addresses[0];
       if (defaultAddr) {
         setSelectedAddressId(defaultAddr.id);
         applyAddress(defaultAddr);
       }
 
-      // Auto-select default payment
       const defaultPay = payments.find(p => p.is_default) || payments[0];
       if (defaultPay) {
         setSelectedPaymentId(defaultPay.id);
@@ -137,12 +186,13 @@ const Checkout = () => {
 
     setSubmitting(true);
     try {
+      // Create order in database
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert({
           user_id: user.id,
           total: totalPrice,
-          status: paymentMethod === "cod" ? "pending_cod" : "pending",
+          status: paymentMethod === "cod" ? "pending_cod" : "pending_paypal",
           shipping_address: { fname, lname, address, city, state, zip, payment_method: paymentMethod },
         })
         .select("id")
@@ -160,10 +210,38 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
       if (itemsError) throw itemsError;
 
-      setOrderId(order.id);
-      setPlaced(true);
-      clearCart();
-      toast.success("Order placed successfully!");
+      // COD — done immediately
+      if (paymentMethod === "cod") {
+        setOrderId(order.id);
+        setPlaced(true);
+        clearCart();
+        toast.success("Order placed successfully!");
+        return;
+      }
+
+      // PayPal — create PayPal order and redirect
+      const currentUrl = window.location.origin + "/checkout";
+      const { data: paypalData, error: paypalError } = await supabase.functions.invoke("paypal", {
+        body: {
+          action: "create-order",
+          amount: totalPrice.toFixed(2),
+          return_url: `${currentUrl}?paypal=success`,
+          cancel_url: `${currentUrl}?paypal=cancel`,
+        },
+      });
+
+      if (paypalError) throw new Error(paypalError.message);
+
+      if (paypalData?.approve_url) {
+        // Save order id so we can update it after capture
+        sessionStorage.setItem("pending_order_id", order.id);
+        // Redirect to PayPal
+        window.location.href = paypalData.approve_url;
+      } else {
+        toast.error("Could not get PayPal approval URL. Please try again.");
+        // Revert order status
+        await supabase.from("orders").update({ status: "payment_failed" }).eq("id", order.id);
+      }
     } catch (err: any) {
       console.error("Order error:", err);
       toast.error(err.message || "Failed to place order. Please try again.");
@@ -171,6 +249,17 @@ const Checkout = () => {
       setSubmitting(false);
     }
   };
+
+  // Loading state while capturing PayPal payment
+  if (submitting && searchParams.get("token")) {
+    return (
+      <div className="container mx-auto px-4 py-20 text-center">
+        <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+        <h1 className="text-2xl font-bold mb-2">Processing Payment...</h1>
+        <p className="text-muted-foreground">Please wait while we confirm your PayPal payment.</p>
+      </div>
+    );
+  }
 
   if (placed) {
     return (
@@ -180,7 +269,7 @@ const Checkout = () => {
         </motion.div>
         <h1 className="text-3xl font-bold mb-2">Order Placed!</h1>
         <p className="text-muted-foreground mb-1">
-          {paymentMethod === "cod" ? "Your order will be delivered. Pay upon arrival." : "Your order has been saved and is being processed."}
+          {paymentMethod === "cod" ? "Your order will be delivered. Pay upon arrival." : "Your PayPal payment has been confirmed!"}
         </p>
         {orderId && <p className="text-xs text-muted-foreground mb-6 font-mono">Order ID: {orderId.slice(0, 8)}…</p>}
         <div className="flex gap-3 justify-center">
@@ -191,7 +280,7 @@ const Checkout = () => {
     );
   }
 
-  if (items.length === 0) {
+  if (items.length === 0 && !searchParams.get("token")) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <h1 className="text-2xl font-bold mb-4">Cart is empty</h1>
@@ -227,7 +316,6 @@ const Checkout = () => {
               )}
             </div>
 
-            {/* Saved address selector */}
             {savedAddresses.length > 0 && (
               <Select value={selectedAddressId} onValueChange={handleAddressChange}>
                 <SelectTrigger>
@@ -266,7 +354,6 @@ const Checkout = () => {
               )}
             </div>
 
-            {/* Saved payment selector */}
             {savedPayments.length > 0 && (
               <Select value={selectedPaymentId} onValueChange={handlePaymentChange}>
                 <SelectTrigger>
@@ -311,12 +398,14 @@ const Checkout = () => {
 
             {paymentMethod === "paypal" && (
               <div className="rounded-lg border border-dashed border-muted-foreground/30 p-4 text-center">
-                <p className="text-sm text-muted-foreground">You'll be redirected to PayPal after placing the order.</p>
+                <Wallet className="h-6 w-6 mx-auto mb-2 text-primary" />
+                <p className="text-sm text-muted-foreground">You'll be redirected to PayPal to complete your payment securely.</p>
               </div>
             )}
 
             {paymentMethod === "cod" && (
               <div className="rounded-lg border border-dashed border-muted-foreground/30 p-4 text-center">
+                <Banknote className="h-6 w-6 mx-auto mb-2 text-primary" />
                 <p className="text-sm text-muted-foreground">Pay with cash when your order is delivered to your door.</p>
               </div>
             )}
@@ -345,7 +434,13 @@ const Checkout = () => {
             <Separator className="my-3" />
             <div className="flex justify-between font-bold text-lg"><span>Total</span><span className="text-accent">${totalPrice.toLocaleString()}</span></div>
             <Button className="w-full mt-4" size="lg" onClick={placeOrder} disabled={submitting}>
-              {submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing…</> : "Place Order"}
+              {submitting ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing…</>
+              ) : paymentMethod === "paypal" ? (
+                <><Wallet className="h-4 w-4 mr-2" /> Pay with PayPal</>
+              ) : (
+                "Place Order"
+              )}
             </Button>
           </div>
         </div>
