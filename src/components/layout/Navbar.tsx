@@ -233,7 +233,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-1">
           {user ? (
             <Button variant="ghost" size="icon" asChild>
-              <Link to="/profile"><User className="h-5 w-5" /></Link>
+              <Link to="/account"><User className="h-5 w-5" /></Link>
             </Button>
           ) : (
             <Button variant="ghost" size="sm" asChild>
