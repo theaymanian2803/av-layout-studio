@@ -23,10 +23,7 @@ import Shipping from "./pages/Shipping";
 import Warranty from "./pages/Warranty";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import Cookies from "./pages/Cookies";
-import Careers from "./pages/Careers";
-import Blog from "./pages/Blog";
-import Affiliate from "./pages/Affiliate";
+import NotFound from "./pages/NotFound";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
