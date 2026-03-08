@@ -14,7 +14,7 @@ const SectionRenderer = ({ section }: { section: LandingSection }) => {
 
   switch (type) {
     case "hero":
-      return <HeroBanner />;
+      return <HeroBanner section={section} />;
     case "categories":
       return <CategoryBanner />;
     case "promo":
