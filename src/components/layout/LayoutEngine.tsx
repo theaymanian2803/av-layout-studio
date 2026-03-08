@@ -89,7 +89,10 @@ export const LayoutEngine = () => {
       if (user) {
         supabase
           .from("user_layout_preferences")
-          .upsert({ user_id: user.id, layout: newWidgets as unknown as Record<string, unknown>[] }, { onConflict: "user_id" })
+          .upsert(
+            { user_id: user.id, layout: newWidgets as any },
+            { onConflict: "user_id" }
+          )
           .then(() => {});
       }
     },
