@@ -170,7 +170,7 @@ export const AdminProducts = () => {
                   <div><Label>Price *</Label><Input type="number" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></div>
                   <div><Label>Original Price</Label><Input type="number" value={form.original_price} onChange={e => setForm({ ...form, original_price: e.target.value })} /></div>
                 </div>
-                <div><Label>Image URL *</Label><Input value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} /></div>
+                <ProductImageUpload value={form.image} onChange={url => setForm({ ...form, image: url })} />
                 <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} /></div>
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label>Stock Count</Label><Input type="number" value={form.stock_count} onChange={e => setForm({ ...form, stock_count: e.target.value })} /></div>
