@@ -84,7 +84,7 @@ export const AdminUsers = () => {
 
   // Update role mutation
   const roleMutation = useMutation({
-    mutationFn: async ({ user_id, role }: { user_id: string; role: string }) => {
+    mutationFn: async ({ user_id, role }: { user_id: string; role: "admin" | "moderator" | "user" }) => {
       // First check if user has a role
       const { data: existing } = await supabase
         .from("user_roles")
@@ -101,7 +101,7 @@ export const AdminUsers = () => {
       } else {
         const { error } = await supabase
           .from("user_roles")
-          .insert({ user_id, role });
+          .insert([{ user_id, role }]);
         if (error) throw error;
       }
     },
