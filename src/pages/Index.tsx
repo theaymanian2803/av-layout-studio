@@ -36,7 +36,7 @@ const Index = () => {
   const { data: sections = [], isLoading } = useLandingSections();
 
   const visibleSections = sections
-    .filter((s) => s.visible)
+    .filter((s) => s.visible && (s.config as any)?.type !== "promo_popup")
     .sort((a, b) => a.sort_order - b.sort_order);
 
   return (
