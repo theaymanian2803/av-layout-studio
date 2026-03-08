@@ -154,7 +154,6 @@ export const AdminProducts = () => {
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>{categories.map((c: any) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
                     </Select>
-                    </Select>
                   </div>
                 </div>
                 {selectedCatSubs.length > 0 && (
