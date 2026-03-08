@@ -45,11 +45,9 @@ const ProductDetail = () => {
 
         <div className="grid md:grid-cols-2 gap-8">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-3">
-              <img src={product.images[selectedImage] || product.image} alt={product.name} className="w-full h-full object-cover" />
-            </div>
+            <ImageZoom src={product.images[selectedImage] || product.image} alt={product.name} />
             {product.images.length > 1 && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-3">
                 {product.images.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImage(i)} className={`w-16 h-16 rounded-md overflow-hidden border-2 ${i === selectedImage ? "border-primary" : "border-transparent"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
