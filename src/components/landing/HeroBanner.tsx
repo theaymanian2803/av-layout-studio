@@ -2,19 +2,13 @@ import { Link } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const HeroBanner = () => {
   const { data: products = [] } = useProducts();
   const featured = products.filter(p => p.rating >= 4.7).slice(0, 3);
   const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    if (featured.length === 0) return;
-    const timer = setInterval(() => setCurrent(prev => (prev + 1) % featured.length), 6000);
-    return () => clearInterval(timer);
-  }, [featured.length]);
 
   if (featured.length === 0) return null;
 
@@ -55,7 +49,7 @@ export const HeroBanner = () => {
                   transition={{ delay: 0.1 }}
                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5"
                 >
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-primary" />
                   <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">{product.brand}</span>
                 </motion.div>
 
@@ -120,32 +114,52 @@ export const HeroBanner = () => {
             </AnimatePresence>
           </div>
 
-          {/* Image side */}
-          <div className="flex-1 flex justify-center items-center relative">
-            {/* Glowing ring behind image */}
-            <div className="absolute w-[320px] h-[320px] md:w-[440px] md:h-[440px] rounded-full border-2 border-primary/10 pointer-events-none" />
-            <div className="absolute w-[360px] h-[360px] md:w-[480px] md:h-[480px] rounded-full border border-accent/5 pointer-events-none" />
+          {/* Image side — large with clip-path */}
+          <div className="flex-1 flex justify-center items-center relative min-h-[360px] md:min-h-[480px]">
+            {/* Decorative ring */}
+            <div className="absolute w-[380px] h-[380px] md:w-[520px] md:h-[520px] rounded-full border border-primary/10 pointer-events-none" />
 
             <AnimatePresence mode="wait">
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={{ opacity: 0, scale: 0.85, rotate: 3 }}
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
                 transition={{ duration: 0.5 }}
-                className="relative"
+                className="relative w-[320px] h-[380px] md:w-[440px] md:h-[520px]"
               >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-72 h-72 md:w-[400px] md:h-[400px] object-cover rounded-3xl shadow-2xl shadow-primary/10"
+                {/* Primary clipped image */}
+                <div
+                  className="absolute inset-0 overflow-hidden shadow-2xl shadow-primary/15"
+                  style={{ clipPath: "polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%)" }}
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Gradient overlay at bottom */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/60 to-transparent" />
+                </div>
+
+                {/* Accent outline shape offset behind */}
+                <div
+                  className="absolute -top-3 -left-3 w-full h-full border-2 border-primary/20 pointer-events-none"
+                  style={{ clipPath: "polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%)" }}
                 />
-                {/* Floating accent badge */}
+
+                {/* Second accent shape — small triangle cut */}
+                <div
+                  className="absolute -bottom-4 -right-4 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-accent to-primary opacity-80"
+                  style={{ clipPath: "polygon(100% 0%, 100% 100%, 0% 100%)" }}
+                />
+
+                {/* Floating badge */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4, type: "spring" }}
-                  className="absolute -bottom-3 -right-3 bg-accent text-accent-foreground px-4 py-2 rounded-xl font-black text-sm shadow-lg shadow-accent/30"
+                  className="absolute -bottom-3 left-4 bg-accent text-accent-foreground px-4 py-2 rounded-xl font-black text-sm shadow-lg shadow-accent/30"
                 >
                   {product.in_stock ? "IN STOCK" : "SOLD OUT"}
                 </motion.div>
