@@ -4,6 +4,26 @@ import { Camera, Mail, MapPin, Phone, Facebook, Instagram, Twitter, Youtube } fr
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+const companyLinks = [
+  { label: "About Us", to: "/about" },
+  { label: "Careers", to: "/careers" },
+  { label: "Blog", to: "/blog" },
+  { label: "Affiliate Program", to: "/affiliate" },
+];
+
+const supportLinks = [
+  { label: "Help Center", to: "/help" },
+  { label: "Shipping & Returns", to: "/shipping" },
+  { label: "Warranty", to: "/warranty" },
+  { label: "Contact Us", to: "/contact" },
+];
+
+const legalLinks = [
+  { label: "Privacy Policy", to: "/privacy" },
+  { label: "Terms of Service", to: "/terms" },
+  { label: "Cookie Policy", to: "/cookies" },
+];
+
 export const Footer = () => {
   const { categories } = useBrandsAndCategories();
 
@@ -76,11 +96,11 @@ export const Footer = () => {
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-4">Company</h4>
             <ul className="space-y-2.5">
-              {["About Us", "Careers", "Press", "Blog", "Affiliate Program"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                    {item}
-                  </a>
+              {companyLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -90,11 +110,11 @@ export const Footer = () => {
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-4">Support</h4>
             <ul className="space-y-2.5">
-              {["Help Center", "Shipping & Returns", "Warranty", "Order Tracking", "Contact Us"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                    {item}
-                  </a>
+              {supportLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -132,10 +152,10 @@ export const Footer = () => {
             © {new Date().getFullYear()} CineGear. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((item) => (
-              <a key={item} href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-                {item}
-              </a>
+            {legalLinks.map((item) => (
+              <Link key={item.label} to={item.to} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                {item.label}
+              </Link>
             ))}
           </div>
           <div className="flex items-center gap-2">
