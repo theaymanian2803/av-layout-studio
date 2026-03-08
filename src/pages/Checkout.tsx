@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet, MapPin, CreditCard, XCircle } from "lucide-react";
+import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet, MapPin, CreditCard, XCircle, Tag } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
