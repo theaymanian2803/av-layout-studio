@@ -56,6 +56,7 @@ const Admin = () => {
               <TabsTrigger value="categories"><Layers className="h-4 w-4 mr-2" /> Categories</TabsTrigger>
               <TabsTrigger value="orders"><ShoppingBag className="h-4 w-4 mr-2" /> Orders</TabsTrigger>
               <TabsTrigger value="reviews"><Star className="h-4 w-4 mr-2" /> Reviews</TabsTrigger>
+              <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" /> Users</TabsTrigger>
             </TabsList>
 
             <TabsContent value="landing"><AdminLandingPage /></TabsContent>
@@ -64,6 +65,7 @@ const Admin = () => {
             <TabsContent value="categories"><AdminCategories /></TabsContent>
             <TabsContent value="orders"><AdminOrders /></TabsContent>
             <TabsContent value="reviews"><AdminReviews /></TabsContent>
+            <TabsContent value="users"><AdminUsers /></TabsContent>
           </Tabs>
         </motion.div>
       </div>
