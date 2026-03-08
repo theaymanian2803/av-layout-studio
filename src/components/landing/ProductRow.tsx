@@ -43,7 +43,7 @@ export const ProductRow = ({ title, category, filter, maxItems = 6 }: ProductRow
       </div>
 
       <div className="relative group">
-        <div ref={scrollRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
+        <div ref={scrollRef} className="flex gap-5 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory justify-center">
           {products.map((p, i) => {
             const discount = p.original_price && p.price
               ? Math.round(((p.original_price - p.price) / p.original_price) * 100)
@@ -55,7 +55,7 @@ export const ProductRow = ({ title, category, filter, maxItems = 6 }: ProductRow
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="min-w-[200px] max-w-[220px] flex-shrink-0 snap-start"
+                className="min-w-[230px] max-w-[250px] flex-shrink-0 snap-start"
               >
                 <Link
                   to={`/product/${p.id}`}
