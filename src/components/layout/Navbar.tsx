@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useBrandsAndCategories, useProducts } from "@/hooks/useProducts";
+import { useWishlist } from "@/hooks/useWishlist";
 import { Badge } from "@/components/ui/badge";
 import { useState, useRef, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +37,8 @@ export const Navbar = () => {
   const { data: isAdmin } = useIsAdmin();
   const { categories, brands, subcategories } = useBrandsAndCategories();
   const { data: products = [] } = useProducts();
+  const { wishlistIds } = useWishlist();
+  const wishlistCount = wishlistIds?.length ?? 0;
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
@@ -245,8 +248,15 @@ export const Navbar = () => {
         <div className="flex items-center gap-1">
           <ThemeToggle />
           {user && (
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/favorites"><Heart className="h-5 w-5" /></Link>
+            <Button variant="ghost" size="icon" asChild className="relative">
+              <Link to="/favorites">
+                <Heart className="h-5 w-5" />
+                {wishlistCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
+                    {wishlistCount}
+                  </Badge>
+                )}
+              </Link>
             </Button>
           )}
           {user ? (
