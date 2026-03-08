@@ -246,7 +246,10 @@ const Checkout = () => {
 
       // Increment coupon usage
       if (appliedCoupon) {
-        await supabase.rpc("increment_coupon_usage" as any, { coupon_code: appliedCoupon.code }).catch(() => {});
+        const { data: coupon } = await supabase.from("coupons").select("used_count").eq("code", appliedCoupon.code).maybeSingle();
+        if (coupon) {
+          await supabase.from("coupons").update({ used_count: coupon.used_count + 1 }).eq("code", appliedCoupon.code);
+        }
       }
 
       // COD — done immediately
