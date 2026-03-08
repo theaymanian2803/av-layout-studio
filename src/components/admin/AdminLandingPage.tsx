@@ -363,7 +363,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Featured Product IDs (comma-separated, or leave empty for auto)</Label>
                                 <Input
                                   value={(editForm.config as any)?.product_ids || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, product_ids: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", product_ids: e.target.value } }))}
                                   placeholder="prod-001, prod-002"
                                   className="h-8 text-sm"
                                 />
