@@ -341,7 +341,7 @@ export const AdminLandingPage = () => {
                                   <Label className="text-xs">CTA Link URL</Label>
                                   <Input
                                     value={(editForm.config as any)?.cta_link || ""}
-                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_link: e.target.value } }))}
+                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", cta_link: e.target.value } }))}
                                     placeholder="/catalog"
                                     className="h-8 text-sm"
                                   />
