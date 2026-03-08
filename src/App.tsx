@@ -44,7 +44,6 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Footer />
-              </Routes>
             </div>
           </BrowserRouter>
         </CartProvider>
