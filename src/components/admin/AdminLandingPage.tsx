@@ -8,6 +8,7 @@ import {
 } from "@/hooks/useLandingSections";
 import { useBrandsAndCategories } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
