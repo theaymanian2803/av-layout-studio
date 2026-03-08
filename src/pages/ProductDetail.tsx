@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { ShoppingCart, ChevronLeft, Star, Check, X, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { ShoppingCart, ChevronLeft, Star, Check, X, Loader2, ZoomIn } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
 const ProductDetail = () => {
