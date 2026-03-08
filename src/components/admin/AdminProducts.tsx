@@ -25,15 +25,20 @@ interface ProductForm {
   price: string;
   original_price: string;
   image: string;
+  images: string[];
   description: string;
   in_stock: boolean;
   stock_count: string;
+  mount_type: string;
+  sensor_size: string;
+  specs: { key: string; value: string }[];
 }
 
 const emptyForm: ProductForm = {
   id: "", name: "", brand: "", category: "", subcategory: "",
-  price: "", original_price: "", image: "", description: "",
-  in_stock: true, stock_count: "0",
+  price: "", original_price: "", image: "", images: [], description: "",
+  in_stock: true, stock_count: "0", mount_type: "", sensor_size: "",
+  specs: [{ key: "", value: "" }],
 };
 
 export const AdminProducts = () => {
@@ -58,6 +63,9 @@ export const AdminProducts = () => {
   };
 
   const openEdit = (p: any) => {
+    const existingSpecs = p.specs && typeof p.specs === 'object' 
+      ? Object.entries(p.specs).map(([key, value]) => ({ key, value: String(value) }))
+      : [];
     setForm({
       id: p.id,
       name: p.name,
@@ -67,9 +75,13 @@ export const AdminProducts = () => {
       price: String(p.price),
       original_price: p.original_price ? String(p.original_price) : "",
       image: p.image,
+      images: p.images || [],
       description: p.description,
       in_stock: p.in_stock,
       stock_count: String(p.stock_count),
+      mount_type: p.mount_type || "",
+      sensor_size: p.sensor_size || "",
+      specs: existingSpecs.length > 0 ? existingSpecs : [{ key: "", value: "" }],
     });
     setEditing(true);
     setDialogOpen(true);
@@ -81,6 +93,10 @@ export const AdminProducts = () => {
       return;
     }
     setSaving(true);
+    const specsObject = form.specs
+      .filter(s => s.key.trim() !== "")
+      .reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});
+    
     const payload = {
       id: form.id || form.name.toLowerCase().replace(/\s+/g, "-").slice(0, 20) + "-" + Date.now(),
       name: form.name,
@@ -90,10 +106,13 @@ export const AdminProducts = () => {
       price: parseFloat(form.price),
       original_price: form.original_price ? parseFloat(form.original_price) : null,
       image: form.image,
-      images: [form.image],
+      images: form.images.length > 0 ? form.images : [form.image],
       description: form.description,
       in_stock: form.in_stock,
       stock_count: parseInt(form.stock_count) || 0,
+      mount_type: form.mount_type || null,
+      sensor_size: form.sensor_size || null,
+      specs: specsObject,
     };
 
     let error;
@@ -172,6 +191,44 @@ export const AdminProducts = () => {
                 </div>
                 <ProductImageUpload value={form.image} onChange={url => setForm({ ...form, image: url })} />
                 <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} /></div>
+                
+                {/* Additional Fields */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label>Mount Type</Label><Input value={form.mount_type} onChange={e => setForm({ ...form, mount_type: e.target.value })} placeholder="e.g. Canon EF, Sony E" /></div>
+                  <div><Label>Sensor Size</Label><Input value={form.sensor_size} onChange={e => setForm({ ...form, sensor_size: e.target.value })} placeholder="e.g. Full Frame, APS-C" /></div>
+                </div>
+                
+                {/* Specs Section */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Specifications</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, specs: [...form.specs, { key: "", value: "" }] })}>
+                      <Plus className="h-3 w-3 mr-1" /> Add Spec
+                    </Button>
+                  </div>
+                  {form.specs.map((spec, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <Input placeholder="Key (e.g. Weight)" value={spec.key} onChange={e => {
+                        const newSpecs = [...form.specs];
+                        newSpecs[idx].key = e.target.value;
+                        setForm({ ...form, specs: newSpecs });
+                      }} className="flex-1" />
+                      <Input placeholder="Value (e.g. 500g)" value={spec.value} onChange={e => {
+                        const newSpecs = [...form.specs];
+                        newSpecs[idx].value = e.target.value;
+                        setForm({ ...form, specs: newSpecs });
+                      }} className="flex-1" />
+                      {form.specs.length > 1 && (
+                        <Button type="button" variant="ghost" size="icon" className="h-10 w-10" onClick={() => {
+                          setForm({ ...form, specs: form.specs.filter((_, i) => i !== idx) });
+                        }}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label>Stock Count</Label><Input type="number" value={form.stock_count} onChange={e => setForm({ ...form, stock_count: e.target.value })} /></div>
                   <div className="flex items-center gap-2 pt-6">
