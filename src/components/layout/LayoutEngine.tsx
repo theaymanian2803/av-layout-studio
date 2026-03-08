@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   DndContext,
   closestCenter,
@@ -22,6 +22,8 @@ import { TopBrands } from "@/components/widgets/TopBrands";
 import { CategoryShowcase } from "@/components/widgets/CategoryShowcase";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Pencil } from "lucide-react";
 
@@ -49,6 +51,7 @@ const DEFAULT_LAYOUT: WidgetConfig[] = [
 const STORAGE_KEY = "av-store-layout";
 
 export const LayoutEngine = () => {
+  const { user } = useAuth();
   const [widgets, setWidgets] = useState<WidgetConfig[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -64,9 +67,34 @@ export const LayoutEngine = () => {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  // Load layout from DB for authenticated users
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(widgets));
-  }, [widgets]);
+    if (user) {
+      supabase
+        .from("user_layout_preferences")
+        .select("layout")
+        .eq("user_id", user.id)
+        .single()
+        .then(({ data }) => {
+          if (data?.layout && Array.isArray(data.layout) && data.layout.length > 0) {
+            setWidgets(data.layout as unknown as WidgetConfig[]);
+          }
+        });
+    }
+  }, [user]);
+
+  const saveLayout = useCallback(
+    (newWidgets: WidgetConfig[]) => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newWidgets));
+      if (user) {
+        supabase
+          .from("user_layout_preferences")
+          .upsert({ user_id: user.id, layout: newWidgets as unknown as Record<string, unknown>[] }, { onConflict: "user_id" })
+          .then(() => {});
+      }
+    },
+    [user]
+  );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -74,7 +102,9 @@ export const LayoutEngine = () => {
       setWidgets(prev => {
         const oldIndex = prev.findIndex(w => w.id === active.id);
         const newIndex = prev.findIndex(w => w.id === over.id);
-        return arrayMove(prev, oldIndex, newIndex);
+        const updated = arrayMove(prev, oldIndex, newIndex);
+        saveLayout(updated);
+        return updated;
       });
     }
   };
@@ -82,6 +112,9 @@ export const LayoutEngine = () => {
   const resetLayout = () => {
     setWidgets(DEFAULT_LAYOUT);
     localStorage.removeItem(STORAGE_KEY);
+    if (user) {
+      supabase.from("user_layout_preferences").delete().eq("user_id", user.id);
+    }
   };
 
   return (
