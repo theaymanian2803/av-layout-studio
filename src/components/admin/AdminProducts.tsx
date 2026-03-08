@@ -191,6 +191,44 @@ export const AdminProducts = () => {
                 </div>
                 <ProductImageUpload value={form.image} onChange={url => setForm({ ...form, image: url })} />
                 <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} /></div>
+                
+                {/* Additional Fields */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label>Mount Type</Label><Input value={form.mount_type} onChange={e => setForm({ ...form, mount_type: e.target.value })} placeholder="e.g. Canon EF, Sony E" /></div>
+                  <div><Label>Sensor Size</Label><Input value={form.sensor_size} onChange={e => setForm({ ...form, sensor_size: e.target.value })} placeholder="e.g. Full Frame, APS-C" /></div>
+                </div>
+                
+                {/* Specs Section */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Specifications</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, specs: [...form.specs, { key: "", value: "" }] })}>
+                      <Plus className="h-3 w-3 mr-1" /> Add Spec
+                    </Button>
+                  </div>
+                  {form.specs.map((spec, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <Input placeholder="Key (e.g. Weight)" value={spec.key} onChange={e => {
+                        const newSpecs = [...form.specs];
+                        newSpecs[idx].key = e.target.value;
+                        setForm({ ...form, specs: newSpecs });
+                      }} className="flex-1" />
+                      <Input placeholder="Value (e.g. 500g)" value={spec.value} onChange={e => {
+                        const newSpecs = [...form.specs];
+                        newSpecs[idx].value = e.target.value;
+                        setForm({ ...form, specs: newSpecs });
+                      }} className="flex-1" />
+                      {form.specs.length > 1 && (
+                        <Button type="button" variant="ghost" size="icon" className="h-10 w-10" onClick={() => {
+                          setForm({ ...form, specs: form.specs.filter((_, i) => i !== idx) });
+                        }}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label>Stock Count</Label><Input type="number" value={form.stock_count} onChange={e => setForm({ ...form, stock_count: e.target.value })} /></div>
                   <div className="flex items-center gap-2 pt-6">
