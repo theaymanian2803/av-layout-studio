@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers } from "lucide-react";
+import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard } from "lucide-react";
 import { motion } from "framer-motion";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminReviews } from "@/components/admin/AdminReviews";
 import { AdminBrands } from "@/components/admin/AdminBrands";
 import { AdminCategories } from "@/components/admin/AdminCategories";
+import { AdminLandingPage } from "@/components/admin/AdminLandingPage";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
