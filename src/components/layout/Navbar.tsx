@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, X, Camera } from "lucide-react";
+import { ShoppingCart, Menu, X, Camera, User, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,6 +14,7 @@ const navLinks = [
 
 export const Navbar = () => {
   const { totalItems, setIsOpen } = useCart();
+  const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -32,6 +34,15 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {user ? (
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/profile"><User className="h-5 w-5" /></Link>
+            </Button>
+          ) : (
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/auth"><LogIn className="h-4 w-4 mr-1" /> Sign In</Link>
+            </Button>
+          )}
           <Button variant="ghost" size="icon" className="relative" onClick={() => setIsOpen(true)}>
             <ShoppingCart className="h-5 w-5" />
             {totalItems > 0 && (
@@ -60,6 +71,15 @@ export const Navbar = () => {
                   {l.label}
                 </Link>
               ))}
+              {user ? (
+                <Link to="/profile" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium hover:text-primary transition-colors">
+                  My Account
+                </Link>
+              ) : (
+                <Link to="/auth" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium hover:text-primary transition-colors">
+                  Sign In
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
