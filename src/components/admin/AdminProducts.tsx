@@ -121,7 +121,8 @@ export const AdminProducts = () => {
     }
   };
 
-  const selectedCat = categories.find(c => c.name === form.category);
+  const selectedCat = categories.find((c: any) => c.name === form.category);
+  const selectedCatSubs = selectedCat ? subcategories.filter((s: any) => s.category_id === selectedCat.id) : [];
 
   return (
     <Card>
