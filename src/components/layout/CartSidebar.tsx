@@ -62,23 +62,21 @@ export const CartSidebar = () => {
               </AnimatePresence>
             </div>
 
-            <SheetFooter className="flex-col gap-3 border-t pt-4">
-              <div className="flex justify-between w-full text-lg font-black">
-                <span>Total</span>
-                <span className="text-accent">${totalPrice.toLocaleString()}</span>
+            <div className="border-t pt-4 mt-auto space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total</span>
+                <span className="text-xl font-black text-accent">${totalPrice.toLocaleString()}</span>
               </div>
-              <div className="flex gap-2 w-full">
-                <Button className="flex-1" size="lg" asChild onClick={() => setIsOpen(false)}>
-                  <Link to="/cart">View Cart</Link>
-                </Button>
-                <Button variant="outline" className="flex-1" size="lg" asChild onClick={() => setIsOpen(false)}>
-                  <Link to="/checkout">Checkout</Link>
-                </Button>
-              </div>
-              <Button variant="ghost" size="sm" onClick={clearCart} className="w-full text-muted-foreground hover:text-destructive">
-                <Trash2 className="h-3.5 w-3.5 mr-1" /> Clear Cart
+              <Button className="w-full" size="lg" asChild onClick={() => setIsOpen(false)}>
+                <Link to="/cart">View Cart</Link>
               </Button>
-            </SheetFooter>
+              <Button variant="outline" className="w-full" size="lg" asChild onClick={() => setIsOpen(false)}>
+                <Link to="/checkout">Checkout</Link>
+              </Button>
+              <button onClick={clearCart} className="flex items-center justify-center gap-1 w-full text-xs text-muted-foreground hover:text-destructive transition-colors pt-1">
+                <Trash2 className="h-3 w-3" /> Clear Cart
+              </button>
+            </div>
           </>
         )}
       </SheetContent>
