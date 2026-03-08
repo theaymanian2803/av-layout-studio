@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useBrandsAndCategories } from "@/hooks/useProducts";
-import { Camera, Mic, Lightbulb, Wrench, CircleDot } from "lucide-react";
+import { Camera, Mic, Lightbulb, Wrench, CircleDot, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
@@ -10,6 +10,7 @@ const icons: Record<string, React.ReactNode> = {
   Audio: <Mic className="h-6 w-6" />,
   Lighting: <Lightbulb className="h-6 w-6" />,
   Accessories: <Wrench className="h-6 w-6" />,
+  Phones: <Smartphone className="h-6 w-6" />,
 };
 
 export const CategoryShowcase = () => {
