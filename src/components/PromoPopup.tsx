@@ -1,8 +1,73 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLandingSections } from "@/hooks/useLandingSections";
+
+const CONFETTI_COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--accent))",
+  "#FFD700",
+  "#FF6B6B",
+  "#4ECDC4",
+  "#A78BFA",
+  "#F472B6",
+  "#34D399",
+];
+
+const ConfettiBurst = () => {
+  const pieces = useMemo(
+    () =>
+      Array.from({ length: 40 }, (_, i) => ({
+        id: i,
+        x: (Math.random() - 0.5) * 500,
+        y: -(Math.random() * 400 + 100),
+        rotate: Math.random() * 720 - 360,
+        scale: Math.random() * 0.6 + 0.4,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+        shape: Math.random() > 0.5 ? "rect" : "circle",
+        delay: Math.random() * 0.3,
+        duration: Math.random() * 1.2 + 1.2,
+      })),
+    []
+  );
+
+  return (
+    <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
+      {pieces.map((p) => (
+        <motion.div
+          key={p.id}
+          initial={{
+            opacity: 1,
+            x: 0,
+            y: 0,
+            rotate: 0,
+            scale: 0,
+          }}
+          animate={{
+            opacity: [1, 1, 0],
+            x: p.x,
+            y: p.y,
+            rotate: p.rotate,
+            scale: p.scale,
+          }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            ease: [0.22, 0.68, 0.36, 1],
+          }}
+          className="absolute left-1/2 top-1/2"
+          style={{
+            width: p.shape === "rect" ? 8 : 7,
+            height: p.shape === "rect" ? 12 : 7,
+            borderRadius: p.shape === "circle" ? "50%" : "2px",
+            backgroundColor: p.color,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 export const PromoPopup = () => {
   const [open, setOpen] = useState(false);
@@ -59,6 +124,9 @@ export const PromoPopup = () => {
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-[420px] rounded-3xl overflow-hidden shadow-[0_25px_80px_-15px_rgba(0,0,0,0.6)]"
           >
+            {/* Confetti burst */}
+            <ConfettiBurst />
+
             {/* Background image with fade-out gradient overlay */}
             {imageUrl && (
               <div className="absolute inset-0 z-0">
