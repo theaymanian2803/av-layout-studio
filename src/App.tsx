@@ -16,6 +16,17 @@ import Cart from "./pages/Cart";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
 import Admin from "./pages/Admin";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Help from "./pages/Help";
+import Shipping from "./pages/Shipping";
+import Warranty from "./pages/Warranty";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Cookies from "./pages/Cookies";
+import Careers from "./pages/Careers";
+import Blog from "./pages/Blog";
+import Affiliate from "./pages/Affiliate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +52,17 @@ const App = () => (
                 <Route path="/account" element={<Account />} />
                 <Route path="/profile" element={<Navigate to="/account" replace />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/shipping" element={<Shipping />} />
+                <Route path="/warranty" element={<Warranty />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/cookies" element={<Cookies />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/affiliate" element={<Affiliate />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Footer />
