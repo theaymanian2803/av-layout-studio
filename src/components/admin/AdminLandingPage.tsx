@@ -103,6 +103,13 @@ export const AdminLandingPage = () => {
     if (newSection.category) config.category = newSection.category;
     if (newSection.cta_text) config.cta_text = newSection.cta_text;
     if (newSection.cta_link) config.cta_link = newSection.cta_link;
+    // Hero-specific config
+    if (newSection.type === "hero") {
+      if (newSection.headline) config.headline = newSection.headline;
+      if (newSection.description) config.description = newSection.description;
+      if (newSection.hero_image) config.hero_image = newSection.hero_image;
+      if (newSection.product_ids) config.product_ids = newSection.product_ids;
+    }
 
     addMutation.mutate(
       {
@@ -118,7 +125,7 @@ export const AdminLandingPage = () => {
         onSuccess: () => {
           toast.success("Section added");
           setAddOpen(false);
-          setNewSection({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "" });
+          setNewSection({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "", headline: "", description: "", hero_image: "", product_ids: "" });
         },
       }
     );
