@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const PAYPAL_CLIENT_ID = Deno.env.get("PAYPAL_CLIENT_ID")!;
 const PAYPAL_CLIENT_SECRET = Deno.env.get("PAYPAL_CLIENT_SECRET")!;
-const PAYPAL_BASE = "https://api-m.sandbox.paypal.com"; // Change to https://api-m.paypal.com for production
+const PAYPAL_BASE = "https://api-m.paypal.com";
 
 async function getAccessToken(): Promise<string> {
   const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
