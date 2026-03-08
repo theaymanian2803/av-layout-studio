@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { Product } from "@/data/products";
+import { DbProduct } from "@/hooks/useProducts";
 
 export interface CartItem {
-  product: Product;
+  product: DbProduct;
   quantity: number;
 }
 
@@ -10,7 +10,7 @@ interface CartContextType {
   items: CartItem[];
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  addItem: (product: Product, qty?: number) => void;
+  addItem: (product: DbProduct, qty?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, qty: number) => void;
   clearCart: () => void;
@@ -33,7 +33,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem("av-cart", JSON.stringify(items));
   }, [items]);
 
-  const addItem = useCallback((product: Product, qty = 1) => {
+  const addItem = useCallback((product: DbProduct, qty = 1) => {
     setItems(prev => {
       const existing = prev.find(i => i.product.id === product.id);
       if (existing) return prev.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + qty } : i);
