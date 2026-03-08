@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useProducts, categories, brands } from "@/hooks/useProducts";
+import { useProducts, useBrandsAndCategories } from "@/hooks/useProducts";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
