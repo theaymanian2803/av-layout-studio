@@ -22,7 +22,7 @@ export const PromoPopup = () => {
 
   useEffect(() => {
     if (!popupSection || isLoading) return;
-    const dismissed = sessionStorage.getItem("promo_popup_dismissed");
+    const dismissed = localStorage.getItem("promo_popup_dismissed");
     if (dismissed) return;
     const timer = setTimeout(() => setOpen(true), delay);
     return () => clearTimeout(timer);
@@ -36,7 +36,7 @@ export const PromoPopup = () => {
 
   const handleClose = () => {
     setOpen(false);
-    sessionStorage.setItem("promo_popup_dismissed", "true");
+    localStorage.setItem("promo_popup_dismissed", "true");
   };
 
   if (!popupSection) return null;
