@@ -322,7 +322,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Hero Description</Label>
                                 <Input
                                   value={(editForm.config as any)?.description || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, description: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", description: e.target.value } }))}
                                   placeholder="Short description text"
                                   className="h-8 text-sm"
                                 />
