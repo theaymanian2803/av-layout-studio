@@ -253,6 +253,7 @@ export const Navbar = () => {
           </Button>
         </div>
       </div>
+      </div>
 
       {/* ===== MEGA MENU ===== */}
       <AnimatePresence>
