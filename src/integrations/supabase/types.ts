@@ -161,6 +161,42 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_methods: {
+        Row: {
+          card_brand: string
+          cardholder_name: string
+          created_at: string
+          expiry_month: number
+          expiry_year: number
+          id: string
+          is_default: boolean
+          last_four: string
+          user_id: string
+        }
+        Insert: {
+          card_brand?: string
+          cardholder_name: string
+          created_at?: string
+          expiry_month: number
+          expiry_year: number
+          id?: string
+          is_default?: boolean
+          last_four: string
+          user_id: string
+        }
+        Update: {
+          card_brand?: string
+          cardholder_name?: string
+          created_at?: string
+          expiry_month?: number
+          expiry_year?: number
+          id?: string
+          is_default?: boolean
+          last_four?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           brand: string
@@ -301,6 +337,57 @@ export type Database = {
           },
         ]
       }
+      shipping_addresses: {
+        Row: {
+          address_line1: string
+          address_line2: string | null
+          city: string
+          country: string
+          created_at: string
+          full_name: string
+          id: string
+          is_default: boolean
+          label: string
+          phone: string | null
+          postal_code: string
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_line1: string
+          address_line2?: string | null
+          city: string
+          country?: string
+          created_at?: string
+          full_name: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          phone?: string | null
+          postal_code: string
+          state: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_line1?: string
+          address_line2?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          phone?: string | null
+          postal_code?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subcategories: {
         Row: {
           category_id: string
@@ -368,6 +455,27 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlist: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
           user_id?: string
         }
         Relationships: []
