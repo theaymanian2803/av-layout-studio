@@ -62,12 +62,38 @@ export const useIsAdmin = () => {
   });
 };
 
-export const categories = [
-  { name: "Cameras", subcategories: ["DSLR", "Mirrorless", "Cinema"] },
-  { name: "Lenses", subcategories: ["Prime", "Zoom", "Telephoto"] },
-  { name: "Audio", subcategories: ["Microphones", "Mixers"] },
-  { name: "Lighting", subcategories: ["LED Panels", "Strobes"] },
-  { name: "Accessories", subcategories: ["Tripods", "Stabilizers", "Wireless"] },
-];
+export const useBrandsAndCategories = () => {
+  const brandsQuery = useQuery({
+    queryKey: ["brands"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("brands").select("*").order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
 
-export const brands = ["Sony", "Canon", "Nikon", "Blackmagic", "Rode", "Shure", "Zoom", "Aputure", "Godox", "Peak Design", "DJI"];
+  const categoriesQuery = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories").select("*").order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const subcategoriesQuery = useQuery({
+    queryKey: ["subcategories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("subcategories").select("*").order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  return {
+    brands: brandsQuery.data || [],
+    categories: categoriesQuery.data || [],
+    subcategories: subcategoriesQuery.data || [],
+    isLoading: brandsQuery.isLoading || categoriesQuery.isLoading || subcategoriesQuery.isLoading,
+  };
+};
