@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useProducts, categories, brands } from "@/hooks/useProducts";
+import { useProducts, useBrandsAndCategories } from "@/hooks/useProducts";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ const emptyForm: ProductForm = {
 
 export const AdminProducts = () => {
   const { data: products = [], isLoading } = useProducts();
+  const { brands, categories, subcategories } = useBrandsAndCategories();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [editing, setEditing] = useState(false);
@@ -120,7 +121,8 @@ export const AdminProducts = () => {
     }
   };
 
-  const selectedCat = categories.find(c => c.name === form.category);
+  const selectedCat = categories.find((c: any) => c.name === form.category);
+  const selectedCatSubs = selectedCat ? subcategories.filter((s: any) => s.category_id === selectedCat.id) : [];
 
   return (
     <Card>
@@ -143,23 +145,23 @@ export const AdminProducts = () => {
                     <Label>Brand *</Label>
                     <Select value={form.brand} onValueChange={v => setForm({ ...form, brand: v })}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>{brands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                      <SelectContent>{brands.map((b: any) => <SelectItem key={b.id} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label>Category *</Label>
                     <Select value={form.category} onValueChange={v => setForm({ ...form, category: v, subcategory: "" })}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>{categories.map(c => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                      <SelectContent>{categories.map((c: any) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                 </div>
-                {selectedCat && (
+                {selectedCatSubs.length > 0 && (
                   <div>
                     <Label>Subcategory</Label>
                     <Select value={form.subcategory} onValueChange={v => setForm({ ...form, subcategory: v })}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>{selectedCat.subcategories.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                      <SelectContent>{selectedCatSubs.map((s: any) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                 )}

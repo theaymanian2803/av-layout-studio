@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert } from "lucide-react";
+import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers } from "lucide-react";
 import { motion } from "framer-motion";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminReviews } from "@/components/admin/AdminReviews";
+import { AdminBrands } from "@/components/admin/AdminBrands";
+import { AdminCategories } from "@/components/admin/AdminCategories";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -45,13 +47,17 @@ const Admin = () => {
           <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
           <Tabs defaultValue="products">
-            <TabsList className="mb-6">
+            <TabsList className="mb-6 flex-wrap">
               <TabsTrigger value="products"><Package className="h-4 w-4 mr-2" /> Products</TabsTrigger>
+              <TabsTrigger value="brands"><Tag className="h-4 w-4 mr-2" /> Brands</TabsTrigger>
+              <TabsTrigger value="categories"><Layers className="h-4 w-4 mr-2" /> Categories</TabsTrigger>
               <TabsTrigger value="orders"><ShoppingBag className="h-4 w-4 mr-2" /> Orders</TabsTrigger>
               <TabsTrigger value="reviews"><Star className="h-4 w-4 mr-2" /> Reviews</TabsTrigger>
             </TabsList>
 
             <TabsContent value="products"><AdminProducts /></TabsContent>
+            <TabsContent value="brands"><AdminBrands /></TabsContent>
+            <TabsContent value="categories"><AdminCategories /></TabsContent>
             <TabsContent value="orders"><AdminOrders /></TabsContent>
             <TabsContent value="reviews"><AdminReviews /></TabsContent>
           </Tabs>

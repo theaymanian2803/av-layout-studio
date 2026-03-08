@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useProducts, categories, brands } from "@/hooks/useProducts";
+import { useProducts, useBrandsAndCategories } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ const Catalog = () => {
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const { addItem } = useCart();
   const { data: products = [], isLoading } = useProducts();
+  const { brands: dbBrands, categories: dbCategories } = useBrandsAndCategories();
 
   const selectedCategory = searchParams.get("category") || "";
   const selectedBrand = searchParams.get("brand") || "";
@@ -52,8 +53,8 @@ const Catalog = () => {
         <h3 className="text-sm font-semibold mb-2">Category</h3>
         <div className="space-y-1">
           <button onClick={() => setFilter("category", "")} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${!selectedCategory ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>All</button>
-          {categories.map(c => (
-            <button key={c.name} onClick={() => setFilter("category", c.name)} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${selectedCategory === c.name ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+          {dbCategories.map((c: any) => (
+            <button key={c.id} onClick={() => setFilter("category", c.name)} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${selectedCategory === c.name ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
               {c.name}
             </button>
           ))}
@@ -63,9 +64,9 @@ const Catalog = () => {
         <h3 className="text-sm font-semibold mb-2">Brand</h3>
         <div className="space-y-1">
           <button onClick={() => setFilter("brand", "")} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${!selectedBrand ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>All</button>
-          {brands.map(b => (
-            <button key={b} onClick={() => setFilter("brand", b)} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${selectedBrand === b ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
-              {b}
+          {dbBrands.map((b: any) => (
+            <button key={b.id} onClick={() => setFilter("brand", b.name)} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${selectedBrand === b.name ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+              {b.name}
             </button>
           ))}
         </div>
