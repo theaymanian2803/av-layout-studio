@@ -321,6 +321,28 @@ export const AdminLandingPage = () => {
                               </Select>
                             </div>
                           )}
+                          {sectionType === "custom_banner" && (
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label className="text-xs">CTA Button Text</Label>
+                                <Input
+                                  value={(editForm.config as any)?.cta_text || ""}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_text: e.target.value } }))}
+                                  placeholder="Shop Now"
+                                  className="h-8 text-sm"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-xs">CTA Link URL</Label>
+                                <Input
+                                  value={(editForm.config as any)?.cta_link || ""}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_link: e.target.value } }))}
+                                  placeholder="/catalog?brand=Sony"
+                                  className="h-8 text-sm"
+                                />
+                              </div>
+                            </div>
+                          )}
                           <div className="flex gap-2">
                             <Button size="sm" onClick={saveEdit}>
                               <Save className="h-3.5 w-3.5 mr-1" /> Save
