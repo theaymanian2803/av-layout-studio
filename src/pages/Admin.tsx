@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers } from "lucide-react";
+import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard } from "lucide-react";
 import { motion } from "framer-motion";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminReviews } from "@/components/admin/AdminReviews";
 import { AdminBrands } from "@/components/admin/AdminBrands";
 import { AdminCategories } from "@/components/admin/AdminCategories";
+import { AdminLandingPage } from "@/components/admin/AdminLandingPage";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -46,8 +47,9 @@ const Admin = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-          <Tabs defaultValue="products">
+          <Tabs defaultValue="landing">
             <TabsList className="mb-6 flex-wrap">
+              <TabsTrigger value="landing"><LayoutDashboard className="h-4 w-4 mr-2" /> Landing Page</TabsTrigger>
               <TabsTrigger value="products"><Package className="h-4 w-4 mr-2" /> Products</TabsTrigger>
               <TabsTrigger value="brands"><Tag className="h-4 w-4 mr-2" /> Brands</TabsTrigger>
               <TabsTrigger value="categories"><Layers className="h-4 w-4 mr-2" /> Categories</TabsTrigger>
@@ -55,6 +57,7 @@ const Admin = () => {
               <TabsTrigger value="reviews"><Star className="h-4 w-4 mr-2" /> Reviews</TabsTrigger>
             </TabsList>
 
+            <TabsContent value="landing"><AdminLandingPage /></TabsContent>
             <TabsContent value="products"><AdminProducts /></TabsContent>
             <TabsContent value="brands"><AdminBrands /></TabsContent>
             <TabsContent value="categories"><AdminCategories /></TabsContent>
