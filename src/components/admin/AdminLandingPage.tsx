@@ -209,6 +209,37 @@ export const AdminLandingPage = () => {
                   </div>
                 </>
               )}
+              {newSection.type === "hero" && (
+                <>
+                  <div>
+                    <Label>Headline</Label>
+                    <Input value={newSection.headline} onChange={(e) => setNewSection((p) => ({ ...p, headline: e.target.value }))} placeholder="e.g. Discover Amazing Gear" />
+                  </div>
+                  <div>
+                    <Label>Description</Label>
+                    <Input value={newSection.description} onChange={(e) => setNewSection((p) => ({ ...p, description: e.target.value }))} placeholder="Short description text" />
+                  </div>
+                  <ImageUploadField
+                    label="Hero Image"
+                    value={newSection.hero_image}
+                    onChange={(url) => setNewSection((p) => ({ ...p, hero_image: url }))}
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>CTA Button Text</Label>
+                      <Input value={newSection.cta_text} onChange={(e) => setNewSection((p) => ({ ...p, cta_text: e.target.value }))} placeholder="Shop Now" />
+                    </div>
+                    <div>
+                      <Label>CTA Link</Label>
+                      <Input value={newSection.cta_link} onChange={(e) => setNewSection((p) => ({ ...p, cta_link: e.target.value }))} placeholder="/catalog" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Featured Product IDs (comma-separated, optional)</Label>
+                    <Input value={newSection.product_ids} onChange={(e) => setNewSection((p) => ({ ...p, product_ids: e.target.value }))} placeholder="prod-001, prod-002" />
+                  </div>
+                </>
+              )}
               {newSection.type === "product_row" && (
                 <div>
                   <Label>Category</Label>
