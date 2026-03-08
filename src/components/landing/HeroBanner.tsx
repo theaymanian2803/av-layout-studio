@@ -1,14 +1,42 @@
 import { Link } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
+import { useLandingSections } from "@/hooks/useLandingSections";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface HeroConfig {
+  type?: string;
+  headline?: string;
+  description?: string;
+  cta_text?: string;
+  cta_link?: string;
+  hero_image?: string;
+  product_ids?: string;
+}
+
 export const HeroBanner = () => {
   const { data: products = [] } = useProducts();
-  const featured = products.filter(p => p.rating >= 4.7).slice(0, 3);
+  const { data: sections = [] } = useLandingSections();
   const [current, setCurrent] = useState(0);
+
+  // Find hero section config
+  const heroSection = sections.find(s => (s.config as any)?.type === "hero");
+  const config = (heroSection?.config || {}) as HeroConfig;
+
+  // Get featured products - use config product_ids if provided, otherwise top-rated
+  let featured = products.filter(p => p.rating >= 4.7).slice(0, 3);
+  
+  if (config.product_ids) {
+    const ids = config.product_ids.split(",").map(id => id.trim());
+    const configProducts = ids
+      .map(id => products.find(p => p.id === id))
+      .filter(Boolean);
+    if (configProducts.length > 0) {
+      featured = configProducts as typeof featured;
+    }
+  }
 
   if (featured.length === 0) return null;
 
@@ -16,6 +44,13 @@ export const HeroBanner = () => {
   const discount = product.original_price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0;
+
+  // Use config values with fallbacks
+  const headline = config.headline || product.name;
+  const description = config.description || product.description;
+  const ctaText = config.cta_text || "Shop Now";
+  const ctaLink = config.cta_link || `/product/${product.id}`;
+  const heroImage = config.hero_image || product.image;
 
   return (
     <section className="relative overflow-hidden bg-background min-h-[480px] md:min-h-[560px]">
@@ -53,18 +88,26 @@ export const HeroBanner = () => {
                   <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">{product.brand}</span>
                 </motion.div>
 
-                {/* Title */}
+                {/* Title - use config headline or product name */}
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[0.95] mb-4">
-                  <span className="text-foreground">{product.name.split(' ').slice(0, -1).join(' ')}</span>
-                  <br />
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    {product.name.split(' ').slice(-1)}
-                  </span>
+                  {config.headline ? (
+                    <span className="bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
+                      {headline}
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-foreground">{product.name.split(' ').slice(0, -1).join(' ')}</span>
+                      <br />
+                      <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                        {product.name.split(' ').slice(-1)}
+                      </span>
+                    </>
+                  )}
                 </h1>
 
                 {/* Description */}
                 <p className="text-muted-foreground max-w-lg mb-6 text-sm md:text-base leading-relaxed">
-                  {product.description}
+                  {description}
                 </p>
 
                 {/* Rating */}
@@ -102,8 +145,8 @@ export const HeroBanner = () => {
                 {/* CTA buttons */}
                 <div className="flex flex-wrap gap-3">
                   <Button size="lg" className="px-8 font-bold text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow" asChild>
-                    <Link to={`/product/${product.id}`}>
-                      <ShoppingCart className="h-5 w-5 mr-2" /> Shop Now
+                    <Link to={ctaLink}>
+                      <ShoppingCart className="h-5 w-5 mr-2" /> {ctaText}
                     </Link>
                   </Button>
                   <Button size="lg" variant="outline" className="px-8 font-bold text-base border-2" asChild>
@@ -131,7 +174,7 @@ export const HeroBanner = () => {
                   style={{ clipPath: "polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%)" }}
                 >
                   <img
-                    src={product.image}
+                    src={heroImage}
                     alt={product.name}
                     className="w-full h-full object-cover scale-105"
                   />
@@ -170,39 +213,41 @@ export const HeroBanner = () => {
         </div>
 
         {/* Navigation dots and arrows */}
-        <div className="flex items-center justify-center gap-4 pb-8 relative z-10">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all"
-            onClick={() => setCurrent(prev => (prev - 1 + featured.length) % featured.length)}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
+        {featured.length > 1 && (
+          <div className="flex items-center justify-center gap-4 pb-8 relative z-10">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all"
+              onClick={() => setCurrent(prev => (prev - 1 + featured.length) % featured.length)}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
 
-          <div className="flex gap-2">
-            {featured.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  i === current
-                    ? "w-10 bg-gradient-to-r from-primary to-accent"
-                    : "w-2.5 bg-muted-foreground/20 hover:bg-muted-foreground/40"
-                }`}
-              />
-            ))}
+            <div className="flex gap-2">
+              {featured.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    i === current
+                      ? "w-10 bg-gradient-to-r from-primary to-accent"
+                      : "w-2.5 bg-muted-foreground/20 hover:bg-muted-foreground/40"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all"
+              onClick={() => setCurrent(prev => (prev + 1) % featured.length)}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
           </div>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all"
-            onClick={() => setCurrent(prev => (prev + 1) % featured.length)}
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </div>
+        )}
       </div>
     </section>
   );
