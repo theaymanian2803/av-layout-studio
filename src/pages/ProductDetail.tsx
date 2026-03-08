@@ -48,7 +48,7 @@ const ImageZoom = ({ src, alt }: { src: string; alt: string }) => {
   );
 };
 
-
+const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useProduct(id || "");
   const { data: allProducts = [] } = useProducts();
