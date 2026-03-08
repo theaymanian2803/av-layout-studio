@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts, useBrandsAndCategories } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,17 @@ const Catalog = () => {
   const { data: products = [], isLoading } = useProducts();
   const { brands: dbBrands, categories: dbCategories } = useBrandsAndCategories();
 
+  const maxPrice = useMemo(() => {
+    const highestProductPrice = products.reduce((max, p) => Math.max(max, Number(p.price) || 0), 0);
+    return Math.max(5000, Math.ceil(highestProductPrice / 100) * 100);
+  }, [products]);
+
+  useEffect(() => {
+    if (priceRange[1] === 5000 && maxPrice > 5000) {
+      setPriceRange([0, maxPrice]);
+    }
+  }, [maxPrice, priceRange]);
+
   const selectedCategory = searchParams.get("category") || "";
   const selectedBrand = searchParams.get("brand") || "";
 
@@ -32,7 +43,7 @@ const Catalog = () => {
   const clearFilters = () => {
     setSearchParams({});
     setSearch("");
-    setPriceRange([0, 5000]);
+    setPriceRange([0, maxPrice]);
   };
 
   const filtered = useMemo(() => {
@@ -45,7 +56,7 @@ const Catalog = () => {
     });
   }, [products, selectedCategory, selectedBrand, priceRange, search]);
 
-  const activeFilterCount = [selectedCategory, selectedBrand, search, priceRange[0] > 0 || priceRange[1] < 5000].filter(Boolean).length;
+  const activeFilterCount = [selectedCategory, selectedBrand, search, priceRange[0] > 0 || priceRange[1] < maxPrice].filter(Boolean).length;
 
   const FilterPanel = () => (
     <div className="space-y-6">
@@ -73,7 +84,7 @@ const Catalog = () => {
       </div>
       <div>
         <h3 className="text-sm font-semibold mb-3">Price Range</h3>
-        <Slider min={0} max={5000} step={50} value={priceRange} onValueChange={setPriceRange} className="mb-2" />
+        <Slider min={0} max={maxPrice} step={50} value={priceRange} onValueChange={setPriceRange} className="mb-2" />
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>${priceRange[0]}</span>
           <span>${priceRange[1]}</span>
@@ -203,3 +214,4 @@ const Catalog = () => {
 };
 
 export default Catalog;
+
