@@ -30,6 +30,7 @@ export const Navbar = () => {
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const [announcementDismissed, setAnnouncementDismissed] = useState(false);
   const megaRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
