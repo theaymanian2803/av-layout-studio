@@ -233,7 +233,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-1">
           {user ? (
             <Button variant="ghost" size="icon" asChild>
-              <Link to="/profile"><User className="h-5 w-5" /></Link>
+              <Link to="/account"><User className="h-5 w-5" /></Link>
             </Button>
           ) : (
             <Button variant="ghost" size="sm" asChild>
@@ -436,7 +436,7 @@ export const Navbar = () => {
               )}
 
               {user ? (
-                <Link to="/profile" onClick={() => setMobileOpen(false)} className="block py-2.5 px-3 text-sm font-medium hover:text-primary hover:bg-secondary/50 rounded-lg transition-all">
+                <Link to="/account" onClick={() => setMobileOpen(false)} className="block py-2.5 px-3 text-sm font-medium hover:text-primary hover:bg-secondary/50 rounded-lg transition-all">
                   My Account
                 </Link>
               ) : (
