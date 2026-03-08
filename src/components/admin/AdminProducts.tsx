@@ -63,6 +63,9 @@ export const AdminProducts = () => {
   };
 
   const openEdit = (p: any) => {
+    const existingSpecs = p.specs && typeof p.specs === 'object' 
+      ? Object.entries(p.specs).map(([key, value]) => ({ key, value: String(value) }))
+      : [];
     setForm({
       id: p.id,
       name: p.name,
@@ -72,9 +75,13 @@ export const AdminProducts = () => {
       price: String(p.price),
       original_price: p.original_price ? String(p.original_price) : "",
       image: p.image,
+      images: p.images || [],
       description: p.description,
       in_stock: p.in_stock,
       stock_count: String(p.stock_count),
+      mount_type: p.mount_type || "",
+      sensor_size: p.sensor_size || "",
+      specs: existingSpecs.length > 0 ? existingSpecs : [{ key: "", value: "" }],
     });
     setEditing(true);
     setDialogOpen(true);
