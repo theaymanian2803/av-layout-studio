@@ -55,7 +55,7 @@ export const ProductRow = ({ title, category, filter, maxItems = 6 }: ProductRow
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="min-w-[230px] max-w-[250px] flex-shrink-0 snap-start"
+                className="min-w-[270px] max-w-[290px] flex-shrink-0 snap-start"
               >
                 <Link
                   to={`/product/${p.id}`}
