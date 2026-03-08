@@ -341,18 +341,12 @@ export const AdminLandingPage = () => {
                                   />
                                 </div>
                               </div>
-                              <div>
-                                <Label className="text-xs">Hero Image URL (overrides product image)</Label>
-                                <Input
-                                  value={(editForm.config as any)?.hero_image || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", hero_image: e.target.value } }))}
-                                  placeholder="https://images.unsplash.com/..."
-                                  className="h-8 text-sm"
-                                />
-                                {(editForm.config as any)?.hero_image && (
-                                  <img src={(editForm.config as any).hero_image} alt="Hero Preview" className="mt-2 h-24 w-auto rounded-lg object-cover border" />
-                                )}
-                              </div>
+                              <ImageUploadField
+                                label="Hero Image (overrides product image)"
+                                value={(editForm.config as any)?.hero_image || ""}
+                                onChange={(url) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", hero_image: url } }))}
+                                previewHeight="h-24"
+                              />
                               <div>
                                 <Label className="text-xs">Featured Product IDs (comma-separated, or leave empty for auto)</Label>
                                 <Input
