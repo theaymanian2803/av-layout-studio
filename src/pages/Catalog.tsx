@@ -1,13 +1,13 @@
 import { useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { products, categories, brands } from "@/data/products";
+import { useProducts, categories, brands } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { useCart } from "@/contexts/CartContext";
-import { Grid, List, ShoppingCart, Search, X, SlidersHorizontal } from "lucide-react";
+import { Grid, List, ShoppingCart, Search, X, SlidersHorizontal, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
@@ -17,6 +17,7 @@ const Catalog = () => {
   const [search, setSearch] = useState("");
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const { addItem } = useCart();
+  const { data: products = [], isLoading } = useProducts();
 
   const selectedCategory = searchParams.get("category") || "";
   const selectedBrand = searchParams.get("brand") || "";
@@ -41,7 +42,7 @@ const Catalog = () => {
       if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.brand.toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
-  }, [selectedCategory, selectedBrand, priceRange, search]);
+  }, [products, selectedCategory, selectedBrand, priceRange, search]);
 
   const activeFilterCount = [selectedCategory, selectedBrand, search, priceRange[0] > 0 || priceRange[1] < 5000].filter(Boolean).length;
 
@@ -84,6 +85,14 @@ const Catalog = () => {
       )}
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -149,7 +158,7 @@ const Catalog = () => {
                           <p className="text-sm font-medium truncate mt-0.5">{p.name}</p>
                           <div className="flex items-center justify-between mt-2">
                             <span className="text-accent font-bold">${p.price.toLocaleString()}</span>
-                            {!p.inStock && <Badge variant="destructive" className="text-[10px]">Sold Out</Badge>}
+                            {!p.in_stock && <Badge variant="destructive" className="text-[10px]">Sold Out</Badge>}
                           </div>
                         </div>
                       </Link>
@@ -175,7 +184,7 @@ const Catalog = () => {
                         </div>
                         <div className="flex flex-col items-end justify-between">
                           <span className="text-accent font-bold text-lg">${p.price.toLocaleString()}</span>
-                          <Button size="sm" onClick={() => addItem(p)} disabled={!p.inStock}>
+                          <Button size="sm" onClick={() => addItem(p as any)} disabled={!p.in_stock}>
                             <ShoppingCart className="h-3 w-3 mr-1" /> Add
                           </Button>
                         </div>
