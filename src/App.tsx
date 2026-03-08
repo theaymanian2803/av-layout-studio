@@ -27,6 +27,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import NotFound from "./pages/NotFound";
+import Favorites from "./pages/Favorites";
 
 export const ThemeContext = createContext<{ theme: string; toggleTheme: () => void }>({ theme: "dark", toggleTheme: () => {} });
 
