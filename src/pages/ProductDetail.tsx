@@ -4,9 +4,49 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { ShoppingCart, ChevronLeft, Star, Check, X, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { ShoppingCart, ChevronLeft, Star, Check, X, Loader2, ZoomIn } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
+
+const ImageZoom = ({ src, alt }: { src: string; alt: string }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [zoomed, setZoomed] = useState(false);
+  const [bgPos, setBgPos] = useState("center");
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setBgPos(`${x}% ${y}%`);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseEnter={() => setZoomed(true)}
+      onMouseLeave={() => setZoomed(false)}
+      onMouseMove={handleMouseMove}
+      className="aspect-square rounded-lg overflow-hidden bg-muted relative cursor-zoom-in group"
+    >
+      <img src={src} alt={alt} className={`w-full h-full object-cover transition-opacity duration-200 ${zoomed ? "opacity-0" : "opacity-100"}`} />
+      {zoomed && (
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${src})`,
+            backgroundSize: "200%",
+            backgroundPosition: bgPos,
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+      )}
+      <div className="absolute bottom-3 right-3 bg-background/70 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        <ZoomIn className="h-4 w-4 text-foreground" />
+      </div>
+    </div>
+  );
+};
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,11 +85,9 @@ const ProductDetail = () => {
 
         <div className="grid md:grid-cols-2 gap-8">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-3">
-              <img src={product.images[selectedImage] || product.image} alt={product.name} className="w-full h-full object-cover" />
-            </div>
+            <ImageZoom src={product.images[selectedImage] || product.image} alt={product.name} />
             {product.images.length > 1 && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-3">
                 {product.images.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImage(i)} className={`w-16 h-16 rounded-md overflow-hidden border-2 ${i === selectedImage ? "border-primary" : "border-transparent"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />

@@ -8,6 +8,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { CartSidebar } from "@/components/layout/CartSidebar";
 import { Footer } from "@/components/layout/Footer";
+import { useTheme } from "@/hooks/useTheme";
+import { createContext } from "react";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetail from "./pages/ProductDetail";
@@ -26,7 +28,43 @@ import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import NotFound from "./pages/NotFound";
 
+export const ThemeContext = createContext<{ theme: string; toggleTheme: () => void }>({ theme: "dark", toggleTheme: () => {} });
+
 const queryClient = new QueryClient();
+
+const AppInner = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <CartSidebar />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/profile" element={<Navigate to="/account" replace />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/shipping" element={<Shipping />} />
+          <Route path="/warranty" element={<Warranty />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Footer />
+      </div>
+    </ThemeContext.Provider>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -36,31 +74,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <div className="dark min-h-screen bg-background text-foreground">
-              <Navbar />
-              <CartSidebar />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/catalog" element={<Catalog />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/profile" element={<Navigate to="/account" replace />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/help" element={<Help />} />
-                <Route path="/shipping" element={<Shipping />} />
-                <Route path="/warranty" element={<Warranty />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/cookies" element={<Cookies />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <Footer />
-            </div>
+            <AppInner />
           </BrowserRouter>
         </CartProvider>
       </AuthProvider>

@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield, ChevronDown, CircleDot, Mic, Lightbulb, Wrench, Smartphone, Zap, ArrowRight, Search } from "lucide-react";
+import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield, ChevronDown, CircleDot, Mic, Lightbulb, Wrench, Smartphone, Zap, ArrowRight, Search, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useBrandsAndCategories, useProducts } from "@/hooks/useProducts";
 import { Badge } from "@/components/ui/badge";
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { ThemeContext } from "@/App";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   Cameras: <Camera className="h-5 w-5" />,
@@ -16,6 +17,17 @@ const categoryIcons: Record<string, React.ReactNode> = {
   Lighting: <Lightbulb className="h-5 w-5" />,
   Accessories: <Wrench className="h-5 w-5" />,
   Phones: <Smartphone className="h-5 w-5" />,
+};
+
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  return (
+    <Button variant="ghost" size="icon" onClick={toggleTheme} className="relative">
+      <Sun className={`h-5 w-5 transition-all ${theme === "dark" ? "scale-0 rotate-90" : "scale-100 rotate-0"} absolute`} />
+      <Moon className={`h-5 w-5 transition-all ${theme === "dark" ? "scale-100 rotate-0" : "scale-0 -rotate-90"}`} />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  );
 };
 
 export const Navbar = () => {
@@ -231,6 +243,7 @@ export const Navbar = () => {
 
         {/* Right actions */}
         <div className="flex items-center gap-1">
+          <ThemeToggle />
           {user ? (
             <Button variant="ghost" size="icon" asChild>
               <Link to="/account"><User className="h-5 w-5" /></Link>
