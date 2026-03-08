@@ -64,9 +64,9 @@ const Catalog = () => {
         <h3 className="text-sm font-semibold mb-2">Brand</h3>
         <div className="space-y-1">
           <button onClick={() => setFilter("brand", "")} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${!selectedBrand ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>All</button>
-          {brands.map(b => (
-            <button key={b} onClick={() => setFilter("brand", b)} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${selectedBrand === b ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
-              {b}
+          {dbBrands.map((b: any) => (
+            <button key={b.id} onClick={() => setFilter("brand", b.name)} className={`block text-sm w-full text-left px-2 py-1.5 rounded ${selectedBrand === b.name ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+              {b.name}
             </button>
           ))}
         </div>
