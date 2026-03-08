@@ -25,15 +25,20 @@ interface ProductForm {
   price: string;
   original_price: string;
   image: string;
+  images: string[];
   description: string;
   in_stock: boolean;
   stock_count: string;
+  mount_type: string;
+  sensor_size: string;
+  specs: { key: string; value: string }[];
 }
 
 const emptyForm: ProductForm = {
   id: "", name: "", brand: "", category: "", subcategory: "",
-  price: "", original_price: "", image: "", description: "",
-  in_stock: true, stock_count: "0",
+  price: "", original_price: "", image: "", images: [], description: "",
+  in_stock: true, stock_count: "0", mount_type: "", sensor_size: "",
+  specs: [{ key: "", value: "" }],
 };
 
 export const AdminProducts = () => {
