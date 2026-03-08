@@ -6,9 +6,6 @@ import { Button } from "@/components/ui/button";
 
 const companyLinks = [
   { label: "About Us", to: "/about" },
-  { label: "Careers", to: "/careers" },
-  { label: "Blog", to: "/blog" },
-  { label: "Affiliate Program", to: "/affiliate" },
 ];
 
 const supportLinks = [
