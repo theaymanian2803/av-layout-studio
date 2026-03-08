@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useBrandsAndCategories, useProducts } from "@/hooks/useProducts";
+import { useWishlist } from "@/hooks/useWishlist";
 import { Badge } from "@/components/ui/badge";
 import { useState, useRef, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
