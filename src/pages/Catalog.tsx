@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts, useBrandsAndCategories } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -11,14 +11,18 @@ import { Grid, List, ShoppingCart, Search, X, SlidersHorizontal, Loader2 } from 
 import { motion, AnimatePresence } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
+const ITEMS_PER_PAGE = 12;
+
 const Catalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
   const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const { addItem } = useCart();
   const { data: products = [], isLoading } = useProducts();
   const { brands: dbBrands, categories: dbCategories } = useBrandsAndCategories();
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const maxPrice = useMemo(() => {
     const highestProductPrice = products.reduce((max, p) => Math.max(max, Number(p.price) || 0), 0);
@@ -38,12 +42,14 @@ const Catalog = () => {
     const params = new URLSearchParams(searchParams);
     if (value) params.set(key, value); else params.delete(key);
     setSearchParams(params);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
   const clearFilters = () => {
     setSearchParams({});
     setSearch("");
     setPriceRange([0, maxPrice]);
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
   const filtered = useMemo(() => {
@@ -55,6 +61,29 @@ const Catalog = () => {
       return true;
     });
   }, [products, selectedCategory, selectedBrand, priceRange, search]);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [selectedCategory, selectedBrand, search, priceRange]);
+
+  const visibleProducts = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
+  const hasMore = visibleCount < filtered.length;
+
+  // Infinite scroll observer
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setVisibleCount((prev) => Math.min(prev + ITEMS_PER_PAGE, filtered.length));
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, filtered.length]);
 
   const activeFilterCount = [selectedCategory, selectedBrand, search, priceRange[0] > 0 || priceRange[1] < maxPrice].filter(Boolean).length;
 
@@ -159,8 +188,8 @@ const Catalog = () => {
             ) : view === "grid" ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 <AnimatePresence mode="popLayout">
-                  {filtered.map((p, i) => (
-                    <motion.div key={p.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ delay: i * 0.03 }}>
+                  {visibleProducts.map((p, i) => (
+                    <motion.div key={p.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ delay: Math.min(i, ITEMS_PER_PAGE) * 0.03 }}>
                       <Link to={`/product/${p.id}`} className="group block rounded-lg border bg-card overflow-hidden hover:border-primary/30 transition-colors">
                         <div className="aspect-square bg-muted overflow-hidden">
                           <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -169,7 +198,7 @@ const Catalog = () => {
                           <p className="text-xs text-muted-foreground">{p.brand}</p>
                           <p className="text-sm font-medium truncate mt-0.5">{p.name}</p>
                           <div className="flex items-center justify-between mt-2">
-                            <span className="text-accent font-bold">${p.price.toLocaleString()}</span>
+                            <span className="text-accent font-bold">${(p.price ?? 0).toLocaleString()}</span>
                             {!p.in_stock && <Badge variant="destructive" className="text-[10px]">Sold Out</Badge>}
                           </div>
                         </div>
@@ -181,8 +210,8 @@ const Catalog = () => {
             ) : (
               <div className="space-y-3">
                 <AnimatePresence mode="popLayout">
-                  {filtered.map((p, i) => (
-                    <motion.div key={p.id} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ delay: i * 0.03 }}>
+                  {visibleProducts.map((p, i) => (
+                    <motion.div key={p.id} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ delay: Math.min(i, ITEMS_PER_PAGE) * 0.03 }}>
                       <div className="flex gap-4 p-4 rounded-lg border bg-card hover:border-primary/30 transition-colors">
                         <Link to={`/product/${p.id}`}>
                           <img src={p.image} alt={p.name} className="w-24 h-24 rounded-md object-cover" />
@@ -195,7 +224,7 @@ const Catalog = () => {
                           </Link>
                         </div>
                         <div className="flex flex-col items-end justify-between">
-                          <span className="text-accent font-bold text-lg">${p.price.toLocaleString()}</span>
+                          <span className="text-accent font-bold text-lg">${(p.price ?? 0).toLocaleString()}</span>
                           <Button size="sm" onClick={() => addItem(p as any)} disabled={!p.in_stock}>
                             <ShoppingCart className="h-3 w-3 mr-1" /> Add
                           </Button>
@@ -206,6 +235,13 @@ const Catalog = () => {
                 </AnimatePresence>
               </div>
             )}
+
+            {/* Infinite scroll sentinel */}
+            <div ref={sentinelRef} className="py-8 flex justify-center">
+              {hasMore && (
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -214,4 +250,3 @@ const Catalog = () => {
 };
 
 export default Catalog;
-
