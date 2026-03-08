@@ -29,6 +29,7 @@ import {
 const items = [
   { title: "Dashboard", url: "/admin", icon: BarChart3 },
   { title: "Landing Page", url: "/admin/landing", icon: LayoutDashboard },
+  { title: "Mega Menu", url: "/admin/megamenu", icon: Menu },
   { title: "Products", url: "/admin/products", icon: Package },
   { title: "Brands", url: "/admin/brands", icon: Tag },
   { title: "Categories", url: "/admin/categories", icon: Layers },
