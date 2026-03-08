@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useBrandsAndCategories, useProducts } from "@/hooks/useProducts";
+import { useLandingSections } from "@/hooks/useLandingSections";
 import { useWishlist } from "@/hooks/useWishlist";
 import { Badge } from "@/components/ui/badge";
 import { useState, useRef, useEffect, useMemo, useCallback, useContext } from "react";
@@ -37,6 +38,7 @@ export const Navbar = () => {
   const { data: isAdmin } = useIsAdmin();
   const { categories, brands, subcategories } = useBrandsAndCategories();
   const { data: products = [] } = useProducts();
+  const { data: sections = [] } = useLandingSections();
   const { wishlistIds } = useWishlist();
   const wishlistCount = wishlistIds?.length ?? 0;
   const navigate = useNavigate();
@@ -112,17 +114,35 @@ export const Navbar = () => {
     }
   }, [searchQuery, navigate]);
 
+  // Mega menu config from DB
+  const megaMenuSection = sections.find((s) => (s.config as any)?.type === "mega_menu");
+  const megaConfig = (megaMenuSection?.config || {}) as any;
+  const megaEnabled = megaConfig.mega_enabled !== false;
+  const announcementEnabled = megaConfig.announcement_enabled !== false;
+  const announcementText = megaConfig.announcement_text || "🚚 Free Shipping on orders over $99 — Use code AVFREE at checkout";
+  const announcementLink = megaConfig.announcement_link || "";
+  const topBrandIds: string[] = megaConfig.top_brand_ids || [];
+  const featuredProductIds: Record<string, string[]> = megaConfig.featured_product_ids || {};
+
   const activeCategory = categories.find((c: any) => c.name === activeCat);
   const activeSubs = subcategories.filter((s: any) => activeCategory && s.category_id === activeCategory.id);
-  const featuredProducts = products
-    .filter(p => p.category === activeCat && p.rating >= 4)
-    .slice(0, 3);
+
+  // Featured products: use admin-selected if available, else fallback to top-rated
+  const adminFeatured = activeCat ? (featuredProductIds[activeCat] || []) : [];
+  const featuredProducts = adminFeatured.length > 0
+    ? adminFeatured.map(id => products.find(p => p.id === id)).filter(Boolean).slice(0, 3)
+    : products.filter(p => p.category === activeCat && p.rating >= 4).slice(0, 3);
+
+  // Top brands: use admin-selected if available, else first 6
+  const displayBrands = topBrandIds.length > 0
+    ? brands.filter((b: any) => topBrandIds.includes(b.id))
+    : brands.slice(0, 6);
 
   return (
     <nav className="sticky top-0 z-50">
       {/* Announcement Bar */}
       <AnimatePresence>
-        {!announcementDismissed && (
+        {announcementEnabled && !announcementDismissed && (
           <motion.div
             initial={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -130,7 +150,13 @@ export const Navbar = () => {
             className="bg-gradient-to-r from-primary to-accent text-primary-foreground overflow-hidden"
           >
             <div className="text-center text-xs md:text-sm font-semibold py-2 px-8 relative">
-              <span>🚚 Free Shipping on orders over $99 — Use code <span className="font-black tracking-wide">AVFREE</span> at checkout</span>
+              {announcementLink ? (
+                <Link to={announcementLink} className="hover:underline">
+                  <span>{announcementText}</span>
+                </Link>
+              ) : (
+                <span>{announcementText}</span>
+              )}
               <button
                 onClick={() => setAnnouncementDismissed(true)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-foreground/70 hover:text-primary-foreground transition-colors"
@@ -157,17 +183,19 @@ export const Navbar = () => {
           </Link>
 
           {/* Shop Mega Trigger */}
-          <button
-            ref={triggerRef}
-            onMouseEnter={openMega}
-            onMouseLeave={closeMega}
-            onClick={() => setMegaOpen(!megaOpen)}
-            className={`px-3 py-2 text-sm font-medium transition-colors rounded-md flex items-center gap-1 ${
-              megaOpen ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-            }`}
-          >
-            Shop <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`} />
-          </button>
+          {megaEnabled && (
+            <button
+              ref={triggerRef}
+              onMouseEnter={openMega}
+              onMouseLeave={closeMega}
+              onClick={() => setMegaOpen(!megaOpen)}
+              className={`px-3 py-2 text-sm font-medium transition-colors rounded-md flex items-center gap-1 ${
+                megaOpen ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              }`}
+            >
+              Shop <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`} />
+            </button>
+          )}
 
           <Link to="/catalog" className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary/50">
             Catalog
@@ -326,7 +354,7 @@ export const Navbar = () => {
                   <div className="mt-6 pt-4 border-t">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-3 px-2">Top Brands</p>
                     <div className="flex flex-wrap gap-1.5 px-2">
-                      {brands.slice(0, 6).map((brand: any) => (
+                      {displayBrands.map((brand: any) => (
                         <Link
                           key={brand.id}
                           to={`/catalog?brand=${brand.name}`}

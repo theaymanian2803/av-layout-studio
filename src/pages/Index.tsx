@@ -35,8 +35,9 @@ const SectionRenderer = ({ section }: { section: LandingSection }) => {
 const Index = () => {
   const { data: sections = [], isLoading } = useLandingSections();
 
+  const hiddenTypes = ["promo_popup", "mega_menu"];
   const visibleSections = sections
-    .filter((s) => s.visible && (s.config as any)?.type !== "promo_popup")
+    .filter((s) => s.visible && !hiddenTypes.includes((s.config as any)?.type))
     .sort((a, b) => a.sort_order - b.sort_order);
 
   return (

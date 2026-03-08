@@ -17,6 +17,7 @@ import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminCoupons } from "@/components/admin/AdminCoupons";
 import { AdminBulkImport } from "@/components/admin/AdminBulkImport";
 import { AdminPromoPopup } from "@/components/admin/AdminPromoPopup";
+import { AdminMegaMenu } from "@/components/admin/AdminMegaMenu";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -74,6 +75,7 @@ const Admin = () => {
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="import" element={<AdminBulkImport />} />
                 <Route path="popup" element={<AdminPromoPopup />} />
+                <Route path="megamenu" element={<AdminMegaMenu />} />
               </Routes>
             </motion.div>
           </main>

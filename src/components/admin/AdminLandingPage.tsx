@@ -146,7 +146,8 @@ export const AdminLandingPage = () => {
     );
   }
 
-  const sorted = [...sections].sort((a, b) => a.sort_order - b.sort_order);
+  const hiddenTypes = ["promo_popup", "mega_menu"];
+  const sorted = [...sections].filter(s => !hiddenTypes.includes((s.config as any)?.type)).sort((a, b) => a.sort_order - b.sort_order);
 
   return (
     <div className="space-y-6">
