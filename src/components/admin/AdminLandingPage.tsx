@@ -97,20 +97,27 @@ export const AdminLandingPage = () => {
   };
 
   const handleAdd = () => {
-    const key = `product_row_${newSection.category.toLowerCase().replace(/\s+/g, "_")}_${Date.now()}`;
+    const key = `${newSection.type}_${Date.now()}`;
+    const config: Record<string, any> = { type: newSection.type };
+    if (newSection.category) config.category = newSection.category;
+    if (newSection.cta_text) config.cta_text = newSection.cta_text;
+    if (newSection.cta_link) config.cta_link = newSection.cta_link;
+
     addMutation.mutate(
       {
         section_key: key,
         title: newSection.title,
+        subtitle: newSection.subtitle || "",
+        image_url: newSection.image_url || "",
         sort_order: sections.length,
         visible: true,
-        config: { type: newSection.type, ...(newSection.category ? { category: newSection.category } : {}) },
+        config,
       } as any,
       {
         onSuccess: () => {
           toast.success("Section added");
           setAddOpen(false);
-          setNewSection({ title: "", type: "product_row", category: "" });
+          setNewSection({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "" });
         },
       }
     );
