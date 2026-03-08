@@ -16,6 +16,7 @@ export const PromoPopup = () => {
   const config = popupSection?.config as any;
   const delay = (config?.delay_seconds ?? 10) * 1000;
   const couponCode = config?.coupon_code || "SAVE10";
+  const imageUrl = config?.image_url || "";
   const title = popupSection?.title || "Special Offer!";
   const subtitle = popupSection?.subtitle || "Use this coupon for an exclusive discount";
 
