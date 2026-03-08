@@ -42,6 +42,7 @@ const AppInner = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
         <CartSidebar />
+        <PromoPopup />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/catalog" element={<Catalog />} />

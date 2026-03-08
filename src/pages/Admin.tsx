@@ -77,6 +77,7 @@ const Admin = () => {
             <TabsContent value="users"><AdminUsers /></TabsContent>
             <TabsContent value="coupons"><AdminCoupons /></TabsContent>
             <TabsContent value="import"><AdminBulkImport /></TabsContent>
+            <TabsContent value="popup"><AdminPromoPopup /></TabsContent>
           </Tabs>
         </motion.div>
       </div>
