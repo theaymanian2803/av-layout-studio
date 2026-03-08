@@ -294,18 +294,11 @@ export const AdminLandingPage = () => {
                               className="h-8 text-sm"
                             />
                           </div>
-                          <div>
-                            <Label className="text-xs">Background Image URL</Label>
-                            <Input
-                              value={editForm.image_url || ""}
-                              onChange={(e) => setEditForm((p) => ({ ...p, image_url: e.target.value }))}
-                              placeholder="https://..."
-                              className="h-8 text-sm"
-                            />
-                            {editForm.image_url && (
-                              <img src={editForm.image_url} alt="Preview" className="mt-2 h-20 w-auto rounded-lg object-cover border" />
-                            )}
-                          </div>
+                          <ImageUploadField
+                            label="Background Image"
+                            value={editForm.image_url || ""}
+                            onChange={(url) => setEditForm((p) => ({ ...p, image_url: url }))}
+                          />
                           
                           {/* Hero-specific controls */}
                           {sectionType === "hero" && (
