@@ -37,6 +37,7 @@ const emptyForm: ProductForm = {
 
 export const AdminProducts = () => {
   const { data: products = [], isLoading } = useProducts();
+  const { brands, categories, subcategories } = useBrandsAndCategories();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [editing, setEditing] = useState(false);
