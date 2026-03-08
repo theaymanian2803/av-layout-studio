@@ -64,6 +64,7 @@ const Admin = () => {
               <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" /> Users</TabsTrigger>
               <TabsTrigger value="coupons"><Percent className="h-4 w-4 mr-2" /> Coupons</TabsTrigger>
               <TabsTrigger value="import"><Upload className="h-4 w-4 mr-2" /> Import</TabsTrigger>
+              <TabsTrigger value="popup"><Gift className="h-4 w-4 mr-2" /> Popup</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard"><AdminDashboard /></TabsContent>
