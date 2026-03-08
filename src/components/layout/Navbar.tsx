@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield, ChevronDown, CircleDot, Mic, Lightbulb, Wrench, Smartphone, Zap, ArrowRight, Search } from "lucide-react";
+import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield, ChevronDown, CircleDot, Mic, Lightbulb, Wrench, Smartphone, Zap, ArrowRight, Search, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin, useBrandsAndCategories, useProducts } from "@/hooks/useProducts";
 import { Badge } from "@/components/ui/badge";
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { ThemeContext } from "@/App";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   Cameras: <Camera className="h-5 w-5" />,
