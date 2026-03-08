@@ -63,18 +63,20 @@ export const CartSidebar = () => {
             </div>
 
             <SheetFooter className="flex-col gap-3 border-t pt-4">
-              <div className="flex justify-between w-full text-lg font-bold">
+              <div className="flex justify-between w-full text-lg font-black">
                 <span>Total</span>
                 <span className="text-accent">${totalPrice.toLocaleString()}</span>
               </div>
-              <Button className="w-full" size="lg" asChild onClick={() => setIsOpen(false)}>
-                <Link to="/cart">View Cart</Link>
-              </Button>
-              <Button variant="outline" className="w-full" size="sm" asChild onClick={() => setIsOpen(false)}>
-                <Link to="/checkout">Checkout</Link>
-              </Button>
-              <Button variant="ghost" size="sm" onClick={clearCart} className="text-muted-foreground">
-                Clear Cart
+              <div className="flex gap-2 w-full">
+                <Button className="flex-1" size="lg" asChild onClick={() => setIsOpen(false)}>
+                  <Link to="/cart">View Cart</Link>
+                </Button>
+                <Button variant="outline" className="flex-1" size="lg" asChild onClick={() => setIsOpen(false)}>
+                  <Link to="/checkout">Checkout</Link>
+                </Button>
+              </div>
+              <Button variant="ghost" size="sm" onClick={clearCart} className="w-full text-muted-foreground hover:text-destructive">
+                <Trash2 className="h-3.5 w-3.5 mr-1" /> Clear Cart
               </Button>
             </SheetFooter>
           </>
