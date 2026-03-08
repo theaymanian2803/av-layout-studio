@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, X, Camera, User, LogIn } from "lucide-react";
+import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsAdmin } from "@/hooks/useProducts";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +16,7 @@ const navLinks = [
 export const Navbar = () => {
   const { totalItems, setIsOpen } = useCart();
   const { user } = useAuth();
+  const { data: isAdmin } = useIsAdmin();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -31,6 +33,11 @@ export const Navbar = () => {
               {l.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link to="/admin" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+              <Shield className="h-3.5 w-3.5" /> Admin
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -71,6 +78,11 @@ export const Navbar = () => {
                   {l.label}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-primary">
+                  Admin Dashboard
+                </Link>
+              )}
               {user ? (
                 <Link to="/profile" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium hover:text-primary transition-colors">
                   My Account
