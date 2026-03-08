@@ -185,13 +185,11 @@ export const AdminLandingPage = () => {
                     <Label>Subtitle</Label>
                     <Input value={newSection.subtitle} onChange={(e) => setNewSection((p) => ({ ...p, subtitle: e.target.value }))} placeholder="Optional description text" />
                   </div>
-                  <div>
-                    <Label>Background Image URL</Label>
-                    <Input value={newSection.image_url} onChange={(e) => setNewSection((p) => ({ ...p, image_url: e.target.value }))} placeholder="https://images.unsplash.com/..." />
-                    {newSection.image_url && (
-                      <img src={newSection.image_url} alt="Preview" className="mt-2 h-20 w-auto rounded-lg object-cover border" />
-                    )}
-                  </div>
+                  <ImageUploadField
+                    label="Background Image"
+                    value={newSection.image_url}
+                    onChange={(url) => setNewSection((p) => ({ ...p, image_url: url }))}
+                  />
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label>CTA Button Text</Label>
