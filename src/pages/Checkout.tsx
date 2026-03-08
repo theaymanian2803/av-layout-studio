@@ -225,7 +225,7 @@ const Checkout = () => {
         .from("orders")
         .insert({
           user_id: user.id,
-          total: totalPrice,
+          total: finalPrice,
           status: paymentMethod === "cod" ? "pending_cod" : "pending_paypal",
           shipping_address: { fname, lname, address, city, state, zip, payment_method: paymentMethod },
         })
