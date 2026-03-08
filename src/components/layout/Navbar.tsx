@@ -436,7 +436,7 @@ export const Navbar = () => {
               )}
 
               {user ? (
-                <Link to="/profile" onClick={() => setMobileOpen(false)} className="block py-2.5 px-3 text-sm font-medium hover:text-primary hover:bg-secondary/50 rounded-lg transition-all">
+                <Link to="/account" onClick={() => setMobileOpen(false)} className="block py-2.5 px-3 text-sm font-medium hover:text-primary hover:bg-secondary/50 rounded-lg transition-all">
                   My Account
                 </Link>
               ) : (
