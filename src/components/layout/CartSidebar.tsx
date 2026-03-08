@@ -68,7 +68,10 @@ export const CartSidebar = () => {
                 <span className="text-accent">${totalPrice.toLocaleString()}</span>
               </div>
               <Button className="w-full" size="lg" asChild onClick={() => setIsOpen(false)}>
-                <Link to="/checkout">Proceed to Checkout</Link>
+                <Link to="/cart">View Cart</Link>
+              </Button>
+              <Button variant="outline" className="w-full" size="sm" asChild onClick={() => setIsOpen(false)}>
+                <Link to="/checkout">Checkout</Link>
               </Button>
               <Button variant="ghost" size="sm" onClick={clearCart} className="text-muted-foreground">
                 Clear Cart
