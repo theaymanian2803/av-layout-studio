@@ -48,7 +48,7 @@ export const Navbar = () => {
 
   const keepOpen = () => clearTimeout(timeoutRef.current);
 
-  // Close on outside click
+  // Close on outside click (mega + search)
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -57,10 +57,44 @@ export const Navbar = () => {
       ) {
         setMegaOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchFocused(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // Search results
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return products
+      .filter(p =>
+        p.name?.toLowerCase().includes(q) ||
+        p.brand?.toLowerCase().includes(q) ||
+        p.category?.toLowerCase().includes(q) ||
+        p.subcategory?.toLowerCase().includes(q)
+      )
+      .slice(0, 6);
+  }, [searchQuery, products]);
+
+  const showSearch = searchFocused && searchQuery.trim().length > 0;
+
+  const handleSearchSelect = useCallback((productId: string) => {
+    setSearchQuery("");
+    setSearchFocused(false);
+    navigate(`/product/${productId}`);
+  }, [navigate]);
+
+  const handleSearchSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setSearchFocused(false);
+      navigate(`/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  }, [searchQuery, navigate]);
 
   const activeCategory = categories.find((c: any) => c.name === activeCat);
   const activeSubs = subcategories.filter((s: any) => activeCategory && s.category_id === activeCategory.id);
