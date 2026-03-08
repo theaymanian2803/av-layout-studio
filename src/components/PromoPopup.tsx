@@ -124,6 +124,9 @@ export const PromoPopup = () => {
             onClick={(e) => e.stopPropagation()}
             className="relative w-full max-w-[420px] rounded-3xl overflow-hidden shadow-[0_25px_80px_-15px_rgba(0,0,0,0.6)]"
           >
+            {/* Confetti burst */}
+            <ConfettiBurst />
+
             {/* Background image with fade-out gradient overlay */}
             {imageUrl && (
               <div className="absolute inset-0 z-0">
