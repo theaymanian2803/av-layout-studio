@@ -153,7 +153,8 @@ export const AdminProducts = () => {
                     <Label>Category *</Label>
                     <Select value={form.category} onValueChange={v => setForm({ ...form, category: v, subcategory: "" })}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>{categories.map(c => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                      <SelectContent>{categories.map((c: any) => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                    </Select>
                     </Select>
                   </div>
                 </div>
