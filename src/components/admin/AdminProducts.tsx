@@ -93,6 +93,10 @@ export const AdminProducts = () => {
       return;
     }
     setSaving(true);
+    const specsObject = form.specs
+      .filter(s => s.key.trim() !== "")
+      .reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});
+    
     const payload = {
       id: form.id || form.name.toLowerCase().replace(/\s+/g, "-").slice(0, 20) + "-" + Date.now(),
       name: form.name,
@@ -102,10 +106,13 @@ export const AdminProducts = () => {
       price: parseFloat(form.price),
       original_price: form.original_price ? parseFloat(form.original_price) : null,
       image: form.image,
-      images: [form.image],
+      images: form.images.length > 0 ? form.images : [form.image],
       description: form.description,
       in_stock: form.in_stock,
       stock_count: parseInt(form.stock_count) || 0,
+      mount_type: form.mount_type || null,
+      sensor_size: form.sensor_size || null,
+      specs: specsObject,
     };
 
     let error;
