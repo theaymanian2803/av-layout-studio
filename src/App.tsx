@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { CartSidebar } from "@/components/layout/CartSidebar";
+import { Footer } from "@/components/layout/Footer";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetail from "./pages/ProductDetail";
@@ -42,6 +43,7 @@ const App = () => (
                 <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              <Footer />
             </div>
           </BrowserRouter>
         </CartProvider>
