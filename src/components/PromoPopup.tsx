@@ -16,6 +16,7 @@ export const PromoPopup = () => {
   const config = popupSection?.config as any;
   const delay = (config?.delay_seconds ?? 10) * 1000;
   const couponCode = config?.coupon_code || "SAVE10";
+  const imageUrl = config?.image_url || "";
   const title = popupSection?.title || "Special Offer!";
   const subtitle = popupSection?.subtitle || "Use this coupon for an exclusive discount";
 
@@ -110,6 +111,16 @@ export const PromoPopup = () => {
               <Button onClick={handleClose} className="w-full rounded-xl h-11">
                 Start Shopping
               </Button>
+
+              {imageUrl && (
+                <div className="mt-5 rounded-xl overflow-hidden">
+                  <img
+                    src={imageUrl}
+                    alt="Promo"
+                    className="w-full h-auto object-cover rounded-xl"
+                  />
+                </div>
+              )}
 
               <p className="text-xs text-muted-foreground mt-4">
                 *Terms and conditions apply

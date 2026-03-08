@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { toast } from "sonner";
 import { Gift, Loader2, Save } from "lucide-react";
 
@@ -27,6 +28,7 @@ export const AdminPromoPopup = () => {
     subtitle: "Use this coupon for an exclusive discount on your order",
     coupon_code: "SAVE10",
     delay_seconds: 10,
+    image_url: "",
   });
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export const AdminPromoPopup = () => {
         subtitle: popupSection.subtitle || "",
         coupon_code: config?.coupon_code || "SAVE10",
         delay_seconds: config?.delay_seconds ?? 10,
+        image_url: config?.image_url || "",
       });
     }
   }, [popupSection]);
@@ -51,6 +54,7 @@ export const AdminPromoPopup = () => {
         type: "promo_popup",
         coupon_code: form.coupon_code,
         delay_seconds: form.delay_seconds,
+        image_url: form.image_url,
       },
     };
 
@@ -145,6 +149,15 @@ export const AdminPromoPopup = () => {
               The popup will appear {form.delay_seconds} second{form.delay_seconds !== 1 ? "s" : ""} after a visitor loads the site.
             </p>
           </div>
+
+          <ImageUploadField
+            label="Popup Image (optional — shown below the content)"
+            value={form.image_url}
+            onChange={(url) => setForm((p) => ({ ...p, image_url: url }))}
+            placeholder="https://example.com/promo-image.jpg"
+            previewHeight="h-24"
+          />
+
           <Button onClick={handleSave} disabled={updateMutation.isPending || addMutation.isPending}>
             <Save className="h-4 w-4 mr-2" />
             {popupSection ? "Save Changes" : "Create Popup"}
