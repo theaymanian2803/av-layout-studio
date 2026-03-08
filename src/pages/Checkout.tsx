@@ -6,25 +6,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet, MapPin, CreditCard } from "lucide-react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
-const paymentMethods = [
-  {
-    id: "paypal",
-    label: "PayPal",
-    icon: <Wallet className="h-5 w-5" />,
-    description: "Pay securely with your PayPal account",
-  },
-  {
-    id: "cod",
-    label: "Cash on Delivery",
-    icon: <Banknote className="h-5 w-5" />,
-    description: "Pay when your order arrives",
-  },
+interface SavedAddress {
+  id: string;
+  label: string;
+  full_name: string;
+  address_line1: string;
+  address_line2: string | null;
+  city: string;
+  state: string;
+  postal_code: string;
+  is_default: boolean;
+}
+
+interface SavedPayment {
+  id: string;
+  card_brand: string;
+  cardholder_name: string;
+  is_default: boolean;
+}
+
+const checkoutPaymentOptions = [
+  { id: "paypal", label: "PayPal", icon: <Wallet className="h-5 w-5" />, description: "Pay securely with your PayPal account" },
+  { id: "cod", label: "Cash on Delivery", icon: <Banknote className="h-5 w-5" />, description: "Pay when your order arrives" },
 ];
 
 const Checkout = () => {
@@ -36,11 +46,81 @@ const Checkout = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("paypal");
 
+  // Saved data
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [savedPayments, setSavedPayments] = useState<SavedPayment[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("new");
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string>("new");
+
   const [form, setForm] = useState({
     fname: "", lname: "", address: "", city: "", state: "", zip: "",
   });
 
   const updateField = (field: string, value: string) => setForm(p => ({ ...p, [field]: value }));
+
+  // Fetch saved addresses & payment methods
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchSaved = async () => {
+      const [addrRes, payRes] = await Promise.all([
+        supabase.from("shipping_addresses").select("*").eq("user_id", user.id).order("is_default", { ascending: false }),
+        supabase.from("payment_methods").select("*").eq("user_id", user.id).order("is_default", { ascending: false }),
+      ]);
+
+      const addresses = (addrRes.data as SavedAddress[]) || [];
+      const payments = (payRes.data as SavedPayment[]) || [];
+
+      setSavedAddresses(addresses);
+      setSavedPayments(payments);
+
+      // Auto-select default address
+      const defaultAddr = addresses.find(a => a.is_default) || addresses[0];
+      if (defaultAddr) {
+        setSelectedAddressId(defaultAddr.id);
+        applyAddress(defaultAddr);
+      }
+
+      // Auto-select default payment
+      const defaultPay = payments.find(p => p.is_default) || payments[0];
+      if (defaultPay) {
+        setSelectedPaymentId(defaultPay.id);
+        setPaymentMethod(defaultPay.card_brand === "PayPal" ? "paypal" : "cod");
+      }
+    };
+
+    fetchSaved();
+  }, [user]);
+
+  const applyAddress = (addr: SavedAddress) => {
+    const nameParts = addr.full_name.split(" ");
+    setForm({
+      fname: nameParts[0] || "",
+      lname: nameParts.slice(1).join(" ") || "",
+      address: addr.address_line1 + (addr.address_line2 ? `, ${addr.address_line2}` : ""),
+      city: addr.city,
+      state: addr.state,
+      zip: addr.postal_code,
+    });
+  };
+
+  const handleAddressChange = (value: string) => {
+    setSelectedAddressId(value);
+    if (value === "new") {
+      setForm({ fname: "", lname: "", address: "", city: "", state: "", zip: "" });
+    } else {
+      const addr = savedAddresses.find(a => a.id === value);
+      if (addr) applyAddress(addr);
+    }
+  };
+
+  const handlePaymentChange = (value: string) => {
+    setSelectedPaymentId(value);
+    if (value !== "new") {
+      const pay = savedPayments.find(p => p.id === value);
+      if (pay) setPaymentMethod(pay.card_brand === "PayPal" ? "paypal" : "cod");
+    }
+  };
 
   const placeOrder = async () => {
     if (!user) {
@@ -77,10 +157,7 @@ const Checkout = () => {
         price: item.product.price,
       }));
 
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(orderItems);
-
+      const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
       if (itemsError) throw itemsError;
 
       setOrderId(order.id);
@@ -103,9 +180,7 @@ const Checkout = () => {
         </motion.div>
         <h1 className="text-3xl font-bold mb-2">Order Placed!</h1>
         <p className="text-muted-foreground mb-1">
-          {paymentMethod === "cod"
-            ? "Your order will be delivered. Pay upon arrival."
-            : "Your order has been saved and is being processed."}
+          {paymentMethod === "cod" ? "Your order will be delivered. Pay upon arrival." : "Your order has been saved and is being processed."}
         </p>
         {orderId && <p className="text-xs text-muted-foreground mb-6 font-mono">Order ID: {orderId.slice(0, 8)}…</p>}
         <div className="flex gap-3 justify-center">
@@ -145,7 +220,31 @@ const Checkout = () => {
         <div className="md:col-span-3 space-y-6">
           {/* Shipping */}
           <div className="space-y-4">
-            <h2 className="font-semibold">Shipping Address</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold flex items-center gap-2"><MapPin className="h-4 w-4" /> Shipping Address</h2>
+              {savedAddresses.length > 0 && (
+                <Link to="/account" className="text-xs text-primary hover:underline">Manage</Link>
+              )}
+            </div>
+
+            {/* Saved address selector */}
+            {savedAddresses.length > 0 && (
+              <Select value={selectedAddressId} onValueChange={handleAddressChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a saved address" />
+                </SelectTrigger>
+                <SelectContent>
+                  {savedAddresses.map(addr => (
+                    <SelectItem key={addr.id} value={addr.id}>
+                      {addr.label} — {addr.full_name}, {addr.city}
+                      {addr.is_default ? " ★" : ""}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="new">+ Enter new address</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
               <div><Label htmlFor="fname">First Name</Label><Input id="fname" placeholder="John" value={form.fname} onChange={e => updateField("fname", e.target.value)} /></div>
               <div><Label htmlFor="lname">Last Name</Label><Input id="lname" placeholder="Doe" value={form.lname} onChange={e => updateField("lname", e.target.value)} /></div>
@@ -160,29 +259,55 @@ const Checkout = () => {
 
           {/* Payment Method */}
           <div className="space-y-4">
-            <h2 className="font-semibold">Payment Method</h2>
-            <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
-              {paymentMethods.map(method => (
-                <label
-                  key={method.id}
-                  htmlFor={method.id}
-                  className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
-                    paymentMethod === method.id
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                      : "border-border hover:border-primary/30"
-                  }`}
-                >
-                  <RadioGroupItem value={method.id} id={method.id} />
-                  <div className={`p-2 rounded-lg ${paymentMethod === method.id ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-                    {method.icon}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{method.label}</p>
-                    <p className="text-xs text-muted-foreground">{method.description}</p>
-                  </div>
-                </label>
-              ))}
-            </RadioGroup>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold flex items-center gap-2"><CreditCard className="h-4 w-4" /> Payment Method</h2>
+              {savedPayments.length > 0 && (
+                <Link to="/account" className="text-xs text-primary hover:underline">Manage</Link>
+              )}
+            </div>
+
+            {/* Saved payment selector */}
+            {savedPayments.length > 0 && (
+              <Select value={selectedPaymentId} onValueChange={handlePaymentChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a saved payment method" />
+                </SelectTrigger>
+                <SelectContent>
+                  {savedPayments.map(pay => (
+                    <SelectItem key={pay.id} value={pay.id}>
+                      {pay.card_brand === "PayPal" ? "PayPal" : "Cash on Delivery"} — {pay.cardholder_name}
+                      {pay.is_default ? " ★" : ""}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="new">+ Choose manually</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+
+            {(savedPayments.length === 0 || selectedPaymentId === "new") && (
+              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
+                {checkoutPaymentOptions.map(method => (
+                  <label
+                    key={method.id}
+                    htmlFor={method.id}
+                    className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                      paymentMethod === method.id
+                        ? "border-primary bg-primary/5 ring-1 ring-primary/20"
+                        : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <RadioGroupItem value={method.id} id={method.id} />
+                    <div className={`p-2 rounded-lg ${paymentMethod === method.id ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      {method.icon}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{method.label}</p>
+                      <p className="text-xs text-muted-foreground">{method.description}</p>
+                    </div>
+                  </label>
+                ))}
+              </RadioGroup>
+            )}
 
             {paymentMethod === "paypal" && (
               <div className="rounded-lg border border-dashed border-muted-foreground/30 p-4 text-center">
