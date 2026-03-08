@@ -244,6 +244,11 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
       if (itemsError) throw itemsError;
 
+      // Increment coupon usage
+      if (appliedCoupon) {
+        await supabase.rpc("increment_coupon_usage" as any, { coupon_code: appliedCoupon.code }).catch(() => {});
+      }
+
       // COD — done immediately
       if (paymentMethod === "cod") {
         setOrderId(order.id);
