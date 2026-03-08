@@ -198,7 +198,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "AVStore <onboarding@resend.dev>",
+        from: "AVStore <orders@yourdomain.com>",
         to: [userEmail],
         subject: `Order Confirmed — #${order_id.slice(0, 8)}`,
         html: emailHtml,
