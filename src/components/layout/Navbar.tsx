@@ -114,11 +114,29 @@ export const Navbar = () => {
     }
   }, [searchQuery, navigate]);
 
+  // Mega menu config from DB
+  const megaMenuSection = sections.find((s) => (s.config as any)?.type === "mega_menu");
+  const megaConfig = (megaMenuSection?.config || {}) as any;
+  const megaEnabled = megaConfig.mega_enabled !== false;
+  const announcementEnabled = megaConfig.announcement_enabled !== false;
+  const announcementText = megaConfig.announcement_text || "🚚 Free Shipping on orders over $99 — Use code AVFREE at checkout";
+  const announcementLink = megaConfig.announcement_link || "";
+  const topBrandIds: string[] = megaConfig.top_brand_ids || [];
+  const featuredProductIds: Record<string, string[]> = megaConfig.featured_product_ids || {};
+
   const activeCategory = categories.find((c: any) => c.name === activeCat);
   const activeSubs = subcategories.filter((s: any) => activeCategory && s.category_id === activeCategory.id);
-  const featuredProducts = products
-    .filter(p => p.category === activeCat && p.rating >= 4)
-    .slice(0, 3);
+
+  // Featured products: use admin-selected if available, else fallback to top-rated
+  const adminFeatured = activeCat ? (featuredProductIds[activeCat] || []) : [];
+  const featuredProducts = adminFeatured.length > 0
+    ? adminFeatured.map(id => products.find(p => p.id === id)).filter(Boolean).slice(0, 3)
+    : products.filter(p => p.category === activeCat && p.rating >= 4).slice(0, 3);
+
+  // Top brands: use admin-selected if available, else first 6
+  const displayBrands = topBrandIds.length > 0
+    ? brands.filter((b: any) => topBrandIds.includes(b.id))
+    : brands.slice(0, 6);
 
   return (
     <nav className="sticky top-0 z-50">
