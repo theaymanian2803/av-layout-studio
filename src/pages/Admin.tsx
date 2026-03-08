@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users, BarChart3, Percent, Upload } from "lucide-react";
+import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users, BarChart3, Percent, Upload, Gift } from "lucide-react";
 import { motion } from "framer-motion";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
