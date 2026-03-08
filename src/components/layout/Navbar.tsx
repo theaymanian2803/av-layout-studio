@@ -141,6 +141,70 @@ export const Navbar = () => {
           )}
         </div>
 
+        {/* Search bar */}
+        <div ref={searchRef} className="hidden md:block relative flex-1 max-w-xs mx-4">
+          <form onSubmit={handleSearchSubmit}>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                placeholder="Search products…"
+                className="w-full h-9 pl-9 pr-3 rounded-lg border border-input bg-secondary/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
+              />
+            </div>
+          </form>
+
+          {/* Search dropdown */}
+          <AnimatePresence>
+            {showSearch && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
+                className="absolute top-full mt-2 left-0 right-0 bg-card border rounded-xl shadow-2xl shadow-background/80 overflow-hidden z-50"
+              >
+                {searchResults.length > 0 ? (
+                  <div className="py-2">
+                    {searchResults.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => handleSearchSelect(p.id)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/50 transition-all text-left"
+                      >
+                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                          <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{p.name}</p>
+                          <p className="text-xs text-muted-foreground">{p.brand} · {p.category}</p>
+                        </div>
+                        <span className="text-sm font-bold text-accent flex-shrink-0">${(p.price ?? 0).toLocaleString()}</span>
+                      </button>
+                    ))}
+                    <div className="border-t px-4 py-2">
+                      <button
+                        onClick={handleSearchSubmit as any}
+                        className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
+                      >
+                        View all results for "{searchQuery}" <ArrowRight className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+                    No products found for "{searchQuery}"
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* Right actions */}
         <div className="flex items-center gap-1">
           {user ? (
