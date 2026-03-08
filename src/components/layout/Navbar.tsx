@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield, ChevronDown, CircleDot, Mic, Lightbulb, Wrench, Smartphone, Zap, ArrowRight, Search, Sun, Moon } from "lucide-react";
+import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield, ChevronDown, CircleDot, Mic, Lightbulb, Wrench, Smartphone, Zap, ArrowRight, Search, Sun, Moon, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -244,6 +244,11 @@ export const Navbar = () => {
         {/* Right actions */}
         <div className="flex items-center gap-1">
           <ThemeToggle />
+          {user && (
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/favorites"><Heart className="h-5 w-5" /></Link>
+            </Button>
+          )}
           {user ? (
             <Button variant="ghost" size="icon" asChild>
               <Link to="/account"><User className="h-5 w-5" /></Link>
