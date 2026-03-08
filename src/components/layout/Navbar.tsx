@@ -142,7 +142,7 @@ export const Navbar = () => {
     <nav className="sticky top-0 z-50">
       {/* Announcement Bar */}
       <AnimatePresence>
-        {!announcementDismissed && (
+        {announcementEnabled && !announcementDismissed && (
           <motion.div
             initial={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -150,7 +150,13 @@ export const Navbar = () => {
             className="bg-gradient-to-r from-primary to-accent text-primary-foreground overflow-hidden"
           >
             <div className="text-center text-xs md:text-sm font-semibold py-2 px-8 relative">
-              <span>🚚 Free Shipping on orders over $99 — Use code <span className="font-black tracking-wide">AVFREE</span> at checkout</span>
+              {announcementLink ? (
+                <Link to={announcementLink} className="hover:underline">
+                  <span>{announcementText}</span>
+                </Link>
+              ) : (
+                <span>{announcementText}</span>
+              )}
               <button
                 onClick={() => setAnnouncementDismissed(true)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-foreground/70 hover:text-primary-foreground transition-colors"
