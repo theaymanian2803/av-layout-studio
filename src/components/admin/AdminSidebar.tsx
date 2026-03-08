@@ -53,7 +53,7 @@ export function AdminSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r">
       <SidebarContent>
-        <SidebarGroup defaultOpen>
+        <SidebarGroup>
           <SidebarGroupLabel>Admin</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
