@@ -147,7 +147,6 @@ export const AdminProducts = () => {
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>{brands.map((b: any) => <SelectItem key={b.id} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                     </Select>
-                    </Select>
                   </div>
                   <div>
                     <Label>Category *</Label>
