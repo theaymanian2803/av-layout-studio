@@ -299,7 +299,7 @@ export const AdminUsers = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setRoleDialog(null)}>Cancel</Button>
             <Button
-              onClick={() => roleDialog && roleMutation.mutate({ user_id: roleDialog.user_id, role: selectedRole })}
+              onClick={() => roleDialog && roleMutation.mutate({ user_id: roleDialog.user_id, role: selectedRole as "admin" | "moderator" | "user" })}
               disabled={roleMutation.isPending}
             >
               {roleMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
