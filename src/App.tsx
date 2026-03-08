@@ -27,6 +27,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import NotFound from "./pages/NotFound";
+import Favorites from "./pages/Favorites";
 
 export const ThemeContext = createContext<{ theme: string; toggleTheme: () => void }>({ theme: "dark", toggleTheme: () => {} });
 
@@ -49,6 +50,7 @@ const AppInner = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/account" element={<Account />} />
           <Route path="/profile" element={<Navigate to="/account" replace />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
