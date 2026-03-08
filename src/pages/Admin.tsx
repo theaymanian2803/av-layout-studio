@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard } from "lucide-react";
+import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
@@ -11,6 +11,7 @@ import { AdminReviews } from "@/components/admin/AdminReviews";
 import { AdminBrands } from "@/components/admin/AdminBrands";
 import { AdminCategories } from "@/components/admin/AdminCategories";
 import { AdminLandingPage } from "@/components/admin/AdminLandingPage";
+import { AdminUsers } from "@/components/admin/AdminUsers";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -55,6 +56,7 @@ const Admin = () => {
               <TabsTrigger value="categories"><Layers className="h-4 w-4 mr-2" /> Categories</TabsTrigger>
               <TabsTrigger value="orders"><ShoppingBag className="h-4 w-4 mr-2" /> Orders</TabsTrigger>
               <TabsTrigger value="reviews"><Star className="h-4 w-4 mr-2" /> Reviews</TabsTrigger>
+              <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" /> Users</TabsTrigger>
             </TabsList>
 
             <TabsContent value="landing"><AdminLandingPage /></TabsContent>
@@ -63,6 +65,7 @@ const Admin = () => {
             <TabsContent value="categories"><AdminCategories /></TabsContent>
             <TabsContent value="orders"><AdminOrders /></TabsContent>
             <TabsContent value="reviews"><AdminReviews /></TabsContent>
+            <TabsContent value="users"><AdminUsers /></TabsContent>
           </Tabs>
         </motion.div>
       </div>
