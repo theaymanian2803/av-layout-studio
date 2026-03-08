@@ -313,7 +313,7 @@ export const AdminLandingPage = () => {
                                 <Label className="text-xs">Hero Headline</Label>
                                 <Input
                                   value={(editForm.config as any)?.headline || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, headline: e.target.value } }))}
+                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", headline: e.target.value } }))}
                                   placeholder="e.g. Discover Amazing Tech"
                                   className="h-8 text-sm"
                                 />
