@@ -8,6 +8,7 @@ import {
 } from "@/hooks/useLandingSections";
 import { useBrandsAndCategories } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -184,13 +185,11 @@ export const AdminLandingPage = () => {
                     <Label>Subtitle</Label>
                     <Input value={newSection.subtitle} onChange={(e) => setNewSection((p) => ({ ...p, subtitle: e.target.value }))} placeholder="Optional description text" />
                   </div>
-                  <div>
-                    <Label>Background Image URL</Label>
-                    <Input value={newSection.image_url} onChange={(e) => setNewSection((p) => ({ ...p, image_url: e.target.value }))} placeholder="https://images.unsplash.com/..." />
-                    {newSection.image_url && (
-                      <img src={newSection.image_url} alt="Preview" className="mt-2 h-20 w-auto rounded-lg object-cover border" />
-                    )}
-                  </div>
+                  <ImageUploadField
+                    label="Background Image"
+                    value={newSection.image_url}
+                    onChange={(url) => setNewSection((p) => ({ ...p, image_url: url }))}
+                  />
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label>CTA Button Text</Label>
@@ -293,18 +292,11 @@ export const AdminLandingPage = () => {
                               className="h-8 text-sm"
                             />
                           </div>
-                          <div>
-                            <Label className="text-xs">Background Image URL</Label>
-                            <Input
-                              value={editForm.image_url || ""}
-                              onChange={(e) => setEditForm((p) => ({ ...p, image_url: e.target.value }))}
-                              placeholder="https://..."
-                              className="h-8 text-sm"
-                            />
-                            {editForm.image_url && (
-                              <img src={editForm.image_url} alt="Preview" className="mt-2 h-20 w-auto rounded-lg object-cover border" />
-                            )}
-                          </div>
+                          <ImageUploadField
+                            label="Background Image"
+                            value={editForm.image_url || ""}
+                            onChange={(url) => setEditForm((p) => ({ ...p, image_url: url }))}
+                          />
                           
                           {/* Hero-specific controls */}
                           {sectionType === "hero" && (
@@ -347,18 +339,12 @@ export const AdminLandingPage = () => {
                                   />
                                 </div>
                               </div>
-                              <div>
-                                <Label className="text-xs">Hero Image URL (overrides product image)</Label>
-                                <Input
-                                  value={(editForm.config as any)?.hero_image || ""}
-                                  onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", hero_image: e.target.value } }))}
-                                  placeholder="https://images.unsplash.com/..."
-                                  className="h-8 text-sm"
-                                />
-                                {(editForm.config as any)?.hero_image && (
-                                  <img src={(editForm.config as any).hero_image} alt="Hero Preview" className="mt-2 h-24 w-auto rounded-lg object-cover border" />
-                                )}
-                              </div>
+                              <ImageUploadField
+                                label="Hero Image (overrides product image)"
+                                value={(editForm.config as any)?.hero_image || ""}
+                                onChange={(url) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", hero_image: url } }))}
+                                previewHeight="h-24"
+                              />
                               <div>
                                 <Label className="text-xs">Featured Product IDs (comma-separated, or leave empty for auto)</Label>
                                 <Input
