@@ -248,8 +248,15 @@ export const Navbar = () => {
         <div className="flex items-center gap-1">
           <ThemeToggle />
           {user && (
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/favorites"><Heart className="h-5 w-5" /></Link>
+            <Button variant="ghost" size="icon" asChild className="relative">
+              <Link to="/favorites">
+                <Heart className="h-5 w-5" />
+                {wishlistCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-primary text-primary-foreground">
+                    {wishlistCount}
+                  </Badge>
+                )}
+              </Link>
             </Button>
           )}
           {user ? (
