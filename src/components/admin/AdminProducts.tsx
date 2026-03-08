@@ -158,12 +158,12 @@ export const AdminProducts = () => {
                     </Select>
                   </div>
                 </div>
-                {selectedCat && (
+                {selectedCatSubs.length > 0 && (
                   <div>
                     <Label>Subcategory</Label>
                     <Select value={form.subcategory} onValueChange={v => setForm({ ...form, subcategory: v })}>
                       <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>{selectedCat.subcategories.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                      <SelectContent>{selectedCatSubs.map((s: any) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                 )}
