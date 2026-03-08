@@ -332,7 +332,7 @@ export const AdminLandingPage = () => {
                                   <Label className="text-xs">CTA Button Text</Label>
                                   <Input
                                     value={(editForm.config as any)?.cta_text || ""}
-                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...p.config, cta_text: e.target.value } }))}
+                                    onChange={(e) => setEditForm((p) => ({ ...p, config: { ...(p.config || {}), type: "hero", cta_text: e.target.value } }))}
                                     placeholder="Shop Now"
                                     className="h-8 text-sm"
                                   />
