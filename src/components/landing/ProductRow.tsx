@@ -45,7 +45,7 @@ export const ProductRow = ({ title, category, filter, maxItems = 6 }: ProductRow
       <div className="relative group">
         <div ref={scrollRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
           {products.map((p, i) => {
-            const discount = p.original_price
+            const discount = p.original_price && p.price
               ? Math.round(((p.original_price - p.price) / p.original_price) * 100)
               : 0;
 
