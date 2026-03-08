@@ -52,7 +52,7 @@ export const AdminLandingPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<LandingSection>>({});
   const [addOpen, setAddOpen] = useState(false);
-  const [newSection, setNewSection] = useState({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "" });
+  const [newSection, setNewSection] = useState({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "", headline: "", description: "", hero_image: "", product_ids: "" });
 
   const handleToggleVisibility = (section: LandingSection) => {
     updateMutation.mutate(
