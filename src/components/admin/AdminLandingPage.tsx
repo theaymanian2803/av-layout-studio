@@ -52,7 +52,7 @@ export const AdminLandingPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<LandingSection>>({});
   const [addOpen, setAddOpen] = useState(false);
-  const [newSection, setNewSection] = useState({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "" });
+  const [newSection, setNewSection] = useState({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "", headline: "", description: "", hero_image: "", product_ids: "" });
 
   const handleToggleVisibility = (section: LandingSection) => {
     updateMutation.mutate(
@@ -103,6 +103,13 @@ export const AdminLandingPage = () => {
     if (newSection.category) config.category = newSection.category;
     if (newSection.cta_text) config.cta_text = newSection.cta_text;
     if (newSection.cta_link) config.cta_link = newSection.cta_link;
+    // Hero-specific config
+    if (newSection.type === "hero") {
+      if (newSection.headline) config.headline = newSection.headline;
+      if (newSection.description) config.description = newSection.description;
+      if (newSection.hero_image) config.hero_image = newSection.hero_image;
+      if (newSection.product_ids) config.product_ids = newSection.product_ids;
+    }
 
     addMutation.mutate(
       {
@@ -118,7 +125,7 @@ export const AdminLandingPage = () => {
         onSuccess: () => {
           toast.success("Section added");
           setAddOpen(false);
-          setNewSection({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "" });
+          setNewSection({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "", headline: "", description: "", hero_image: "", product_ids: "" });
         },
       }
     );
@@ -199,6 +206,37 @@ export const AdminLandingPage = () => {
                       <Label>CTA Link</Label>
                       <Input value={newSection.cta_link} onChange={(e) => setNewSection((p) => ({ ...p, cta_link: e.target.value }))} placeholder="/catalog" />
                     </div>
+                  </div>
+                </>
+              )}
+              {newSection.type === "hero" && (
+                <>
+                  <div>
+                    <Label>Headline</Label>
+                    <Input value={newSection.headline} onChange={(e) => setNewSection((p) => ({ ...p, headline: e.target.value }))} placeholder="e.g. Discover Amazing Gear" />
+                  </div>
+                  <div>
+                    <Label>Description</Label>
+                    <Input value={newSection.description} onChange={(e) => setNewSection((p) => ({ ...p, description: e.target.value }))} placeholder="Short description text" />
+                  </div>
+                  <ImageUploadField
+                    label="Hero Image"
+                    value={newSection.hero_image}
+                    onChange={(url) => setNewSection((p) => ({ ...p, hero_image: url }))}
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>CTA Button Text</Label>
+                      <Input value={newSection.cta_text} onChange={(e) => setNewSection((p) => ({ ...p, cta_text: e.target.value }))} placeholder="Shop Now" />
+                    </div>
+                    <div>
+                      <Label>CTA Link</Label>
+                      <Input value={newSection.cta_link} onChange={(e) => setNewSection((p) => ({ ...p, cta_link: e.target.value }))} placeholder="/catalog" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Featured Product IDs (comma-separated, optional)</Label>
+                    <Input value={newSection.product_ids} onChange={(e) => setNewSection((p) => ({ ...p, product_ids: e.target.value }))} placeholder="prod-001, prod-002" />
                   </div>
                 </>
               )}

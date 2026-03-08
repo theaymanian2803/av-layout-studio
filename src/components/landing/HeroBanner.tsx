@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
-import { useLandingSections } from "@/hooks/useLandingSections";
+import { LandingSection } from "@/hooks/useLandingSections";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
 import { useState } from "react";
@@ -16,14 +16,15 @@ interface HeroConfig {
   product_ids?: string;
 }
 
-export const HeroBanner = () => {
+interface HeroBannerProps {
+  section: LandingSection;
+}
+
+export const HeroBanner = ({ section }: HeroBannerProps) => {
   const { data: products = [] } = useProducts();
-  const { data: sections = [] } = useLandingSections();
   const [current, setCurrent] = useState(0);
 
-  // Find hero section config
-  const heroSection = sections.find(s => (s.config as any)?.type === "hero");
-  const config = (heroSection?.config || {}) as HeroConfig;
+  const config = (section.config || {}) as HeroConfig;
 
   // Get featured products - use config product_ids if provided, otherwise top-rated
   let featured = products.filter(p => p.rating >= 4.7).slice(0, 3);
@@ -38,19 +39,22 @@ export const HeroBanner = () => {
     }
   }
 
-  if (featured.length === 0) return null;
+  // If no products but we have a custom hero image, show that
+  const hasCustomContent = config.headline || config.hero_image;
+  
+  if (featured.length === 0 && !hasCustomContent) return null;
 
-  const product = featured[current];
-  const discount = product.original_price
+  const product = featured[current] || featured[0];
+  const discount = product?.original_price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0;
 
   // Use config values with fallbacks
-  const headline = config.headline || product.name;
-  const description = config.description || product.description;
+  const headline = config.headline || product?.name || section.title;
+  const description = config.description || product?.description || section.subtitle || "";
   const ctaText = config.cta_text || "Shop Now";
-  const ctaLink = config.cta_link || `/product/${product.id}`;
-  const heroImage = config.hero_image || product.image;
+  const ctaLink = config.cta_link || (product ? `/product/${product.id}` : "/catalog");
+  const heroImage = config.hero_image || product?.image || section.image_url || "";
 
   return (
     <section className="relative overflow-hidden bg-background min-h-[480px] md:min-h-[560px]">
@@ -71,76 +75,74 @@ export const HeroBanner = () => {
           <div className="flex-1 z-10">
             <AnimatePresence mode="wait">
               <motion.div
-                key={product.id}
+                key={product?.id || section.id}
                 initial={{ opacity: 0, x: -40 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 40 }}
                 transition={{ duration: 0.5 }}
               >
                 {/* Brand tag */}
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5"
-                >
-                  <span className="w-2 h-2 rounded-full bg-primary" />
-                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">{product.brand}</span>
-                </motion.div>
+                {product && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-5"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                    <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">{product.brand}</span>
+                  </motion.div>
+                )}
 
-                {/* Title - use config headline or product name */}
+                {/* Title */}
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[0.95] mb-4">
-                  {config.headline ? (
-                    <span className="bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
-                      {headline}
-                    </span>
-                  ) : (
-                    <>
-                      <span className="text-foreground">{product.name.split(' ').slice(0, -1).join(' ')}</span>
-                      <br />
-                      <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                        {product.name.split(' ').slice(-1)}
-                      </span>
-                    </>
-                  )}
+                  <span className="bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
+                    {headline}
+                  </span>
                 </h1>
 
                 {/* Description */}
-                <p className="text-muted-foreground max-w-lg mb-6 text-sm md:text-base leading-relaxed">
-                  {description}
-                </p>
+                {description && (
+                  <p className="text-muted-foreground max-w-lg mb-6 text-sm md:text-base leading-relaxed">
+                    {description}
+                  </p>
+                )}
 
-                {/* Rating */}
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-4 w-4 ${i < Math.round(product.rating) ? "text-accent fill-accent" : "text-muted-foreground/30"}`}
-                      />
-                    ))}
+                {/* Rating - only show if product exists */}
+                {product && (
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < Math.round(product.rating) ? "text-accent fill-accent" : "text-muted-foreground/30"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-muted-foreground font-medium">
+                      {product.rating} ({product.review_count} reviews)
+                    </span>
                   </div>
-                  <span className="text-xs text-muted-foreground font-medium">
-                    {product.rating} ({product.review_count} reviews)
-                  </span>
-                </div>
+                )}
 
-                {/* Price block */}
-                <div className="flex items-end gap-3 mb-8">
-                  <span className="text-4xl md:text-5xl font-black text-foreground">
-                    ${product.price.toLocaleString()}
-                  </span>
-                  {product.original_price && (
-                    <>
-                      <span className="text-xl text-muted-foreground line-through mb-1">
-                        ${product.original_price.toLocaleString()}
-                      </span>
-                      <span className="text-sm font-bold text-accent bg-accent/10 px-2 py-1 rounded-md mb-1">
-                        -{discount}%
-                      </span>
-                    </>
-                  )}
-                </div>
+                {/* Price block - only show if product exists */}
+                {product && (
+                  <div className="flex items-end gap-3 mb-8">
+                    <span className="text-4xl md:text-5xl font-black text-foreground">
+                      ${product.price.toLocaleString()}
+                    </span>
+                    {product.original_price && (
+                      <>
+                        <span className="text-xl text-muted-foreground line-through mb-1">
+                          ${product.original_price.toLocaleString()}
+                        </span>
+                        <span className="text-sm font-bold text-accent bg-accent/10 px-2 py-1 rounded-md mb-1">
+                          -{discount}%
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {/* CTA buttons */}
                 <div className="flex flex-wrap gap-3">
@@ -149,9 +151,11 @@ export const HeroBanner = () => {
                       <ShoppingCart className="h-5 w-5 mr-2" /> {ctaText}
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="px-8 font-bold text-base border-2" asChild>
-                    <Link to={`/product/${product.id}`}>View Details</Link>
-                  </Button>
+                  {product && (
+                    <Button size="lg" variant="outline" className="px-8 font-bold text-base border-2" asChild>
+                      <Link to={`/product/${product.id}`}>View Details</Link>
+                    </Button>
+                  )}
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -161,7 +165,7 @@ export const HeroBanner = () => {
           <div className="flex-1 flex justify-center items-center relative min-h-[360px] md:min-h-[500px]">
             <AnimatePresence mode="wait">
               <motion.div
-                key={product.id}
+                key={product?.id || section.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -169,16 +173,18 @@ export const HeroBanner = () => {
                 className="relative w-[340px] h-[400px] md:w-[480px] md:h-[540px]"
               >
                 {/* Main image — diagonal triangle cut */}
-                <div
-                  className="absolute inset-0 overflow-hidden"
-                  style={{ clipPath: "polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%)" }}
-                >
-                  <img
-                    src={heroImage}
-                    alt={product.name}
-                    className="w-full h-full object-cover scale-105"
-                  />
-                </div>
+                {heroImage && (
+                  <div
+                    className="absolute inset-0 overflow-hidden"
+                    style={{ clipPath: "polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%)" }}
+                  >
+                    <img
+                      src={heroImage}
+                      alt={headline}
+                      className="w-full h-full object-cover scale-105"
+                    />
+                  </div>
+                )}
 
                 {/* Accent triangle — top-left corner */}
                 <div
@@ -199,20 +205,22 @@ export const HeroBanner = () => {
                 />
 
                 {/* Floating badge */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4, type: "spring" }}
-                  className="absolute bottom-6 left-6 bg-accent text-accent-foreground px-4 py-2 rounded-xl font-black text-sm shadow-lg shadow-accent/30 z-10"
-                >
-                  {product.in_stock ? "IN STOCK" : "SOLD OUT"}
-                </motion.div>
+                {product && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4, type: "spring" }}
+                    className="absolute bottom-6 left-6 bg-accent text-accent-foreground px-4 py-2 rounded-xl font-black text-sm shadow-lg shadow-accent/30 z-10"
+                  >
+                    {product.in_stock ? "IN STOCK" : "SOLD OUT"}
+                  </motion.div>
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
         </div>
 
-        {/* Navigation dots and arrows */}
+        {/* Navigation dots and arrows - only show if multiple products */}
         {featured.length > 1 && (
           <div className="flex items-center justify-center gap-4 pb-8 relative z-10">
             <Button
