@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet, MapPin, CreditCard, XCircle } from "lucide-react";
+import { ChevronLeft, CheckCircle2, Loader2, Banknote, Wallet, MapPin, CreditCard, XCircle, Tag } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -46,7 +46,41 @@ const Checkout = () => {
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("paypal");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_type: string; discount_value: number } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const captureAttempted = useRef(false);
+
+  const discount = appliedCoupon
+    ? appliedCoupon.discount_type === "percentage"
+      ? totalPrice * (appliedCoupon.discount_value / 100)
+      : appliedCoupon.discount_value
+    : 0;
+  const finalPrice = Math.max(0, totalPrice - discount);
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("coupons")
+        .select("*")
+        .eq("code", couponCode.toUpperCase().trim())
+        .eq("active", true)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) { toast.error("Invalid coupon code"); return; }
+      if (data.expires_at && new Date(data.expires_at) < new Date()) { toast.error("Coupon has expired"); return; }
+      if (data.max_uses !== null && data.used_count >= data.max_uses) { toast.error("Coupon usage limit reached"); return; }
+      if (data.min_order_amount && totalPrice < data.min_order_amount) { toast.error(`Minimum order $${data.min_order_amount} required`); return; }
+      setAppliedCoupon({ code: data.code, discount_type: data.discount_type, discount_value: data.discount_value });
+      toast.success(`Coupon "${data.code}" applied!`);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
   // Saved data
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
@@ -191,7 +225,7 @@ const Checkout = () => {
         .from("orders")
         .insert({
           user_id: user.id,
-          total: totalPrice,
+          total: finalPrice,
           status: paymentMethod === "cod" ? "pending_cod" : "pending_paypal",
           shipping_address: { fname, lname, address, city, state, zip, payment_method: paymentMethod },
         })
@@ -210,6 +244,14 @@ const Checkout = () => {
       const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
       if (itemsError) throw itemsError;
 
+      // Increment coupon usage
+      if (appliedCoupon) {
+        const { data: coupon } = await supabase.from("coupons").select("used_count").eq("code", appliedCoupon.code).maybeSingle();
+        if (coupon) {
+          await supabase.from("coupons").update({ used_count: coupon.used_count + 1 }).eq("code", appliedCoupon.code);
+        }
+      }
+
       // COD — done immediately
       if (paymentMethod === "cod") {
         setOrderId(order.id);
@@ -224,7 +266,7 @@ const Checkout = () => {
       const { data: paypalData, error: paypalError } = await supabase.functions.invoke("paypal", {
         body: {
           action: "create-order",
-          amount: totalPrice.toFixed(2),
+          amount: finalPrice.toFixed(2),
           return_url: `${currentUrl}?paypal=success`,
           cancel_url: `${currentUrl}?paypal=cancel`,
         },
@@ -439,14 +481,41 @@ const Checkout = () => {
             </div>
             
             <Separator className="my-3" />
+
+            {/* Coupon Code */}
+            <div className="mb-3">
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between bg-green-500/10 rounded-lg p-2.5">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-green-500" />
+                    <span className="text-sm font-medium text-green-500">{appliedCoupon.code}</span>
+                  </div>
+                  <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setAppliedCoupon(null)}>Remove</Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input placeholder="Coupon code" value={couponCode} onChange={e => setCouponCode(e.target.value)} className="h-9 text-sm" />
+                  <Button variant="outline" size="sm" onClick={applyCoupon} disabled={couponLoading} className="h-9 shrink-0">
+                    {couponLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : "Apply"}
+                  </Button>
+                </div>
+              )}
+            </div>
+
             <div className="flex justify-between text-sm"><span>Subtotal</span><span>${totalPrice.toLocaleString()}</span></div>
+            {appliedCoupon && (
+              <div className="flex justify-between text-sm text-green-500">
+                <span>Discount ({appliedCoupon.discount_type === "percentage" ? `${appliedCoupon.discount_value}%` : `$${appliedCoupon.discount_value}`})</span>
+                <span>-${discount.toLocaleString()}</span>
+              </div>
+            )}
             <div className="flex justify-between text-sm text-muted-foreground"><span>Shipping</span><span>Free</span></div>
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Payment</span>
               <span className="capitalize">{paymentMethod === "cod" ? "Cash on Delivery" : "PayPal"}</span>
             </div>
             <Separator className="my-3" />
-            <div className="flex justify-between font-bold text-lg"><span>Total</span><span className="text-accent">${totalPrice.toLocaleString()}</span></div>
+            <div className="flex justify-between font-bold text-lg"><span>Total</span><span className="text-accent">${finalPrice.toLocaleString()}</span></div>
             <Button className="w-full mt-4" size="lg" onClick={placeOrder} disabled={submitting}>
               {submitting ? (
                 <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing…</>

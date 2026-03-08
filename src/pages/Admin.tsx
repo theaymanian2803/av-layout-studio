@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users } from "lucide-react";
+import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users, BarChart3, Percent, Upload } from "lucide-react";
 import { motion } from "framer-motion";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
@@ -12,6 +12,9 @@ import { AdminBrands } from "@/components/admin/AdminBrands";
 import { AdminCategories } from "@/components/admin/AdminCategories";
 import { AdminLandingPage } from "@/components/admin/AdminLandingPage";
 import { AdminUsers } from "@/components/admin/AdminUsers";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
+import { AdminCoupons } from "@/components/admin/AdminCoupons";
+import { AdminBulkImport } from "@/components/admin/AdminBulkImport";
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -48,8 +51,9 @@ const Admin = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-          <Tabs defaultValue="landing">
+          <Tabs defaultValue="dashboard">
             <TabsList className="mb-6 flex-wrap">
+              <TabsTrigger value="dashboard"><BarChart3 className="h-4 w-4 mr-2" /> Dashboard</TabsTrigger>
               <TabsTrigger value="landing"><LayoutDashboard className="h-4 w-4 mr-2" /> Landing Page</TabsTrigger>
               <TabsTrigger value="products"><Package className="h-4 w-4 mr-2" /> Products</TabsTrigger>
               <TabsTrigger value="brands"><Tag className="h-4 w-4 mr-2" /> Brands</TabsTrigger>
@@ -57,8 +61,11 @@ const Admin = () => {
               <TabsTrigger value="orders"><ShoppingBag className="h-4 w-4 mr-2" /> Orders</TabsTrigger>
               <TabsTrigger value="reviews"><Star className="h-4 w-4 mr-2" /> Reviews</TabsTrigger>
               <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" /> Users</TabsTrigger>
+              <TabsTrigger value="coupons"><Percent className="h-4 w-4 mr-2" /> Coupons</TabsTrigger>
+              <TabsTrigger value="import"><Upload className="h-4 w-4 mr-2" /> Import</TabsTrigger>
             </TabsList>
 
+            <TabsContent value="dashboard"><AdminDashboard /></TabsContent>
             <TabsContent value="landing"><AdminLandingPage /></TabsContent>
             <TabsContent value="products"><AdminProducts /></TabsContent>
             <TabsContent value="brands"><AdminBrands /></TabsContent>
@@ -66,6 +73,8 @@ const Admin = () => {
             <TabsContent value="orders"><AdminOrders /></TabsContent>
             <TabsContent value="reviews"><AdminReviews /></TabsContent>
             <TabsContent value="users"><AdminUsers /></TabsContent>
+            <TabsContent value="coupons"><AdminCoupons /></TabsContent>
+            <TabsContent value="import"><AdminBulkImport /></TabsContent>
           </Tabs>
         </motion.div>
       </div>
