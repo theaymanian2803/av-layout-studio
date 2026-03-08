@@ -1,0 +1,1 @@
+DELETE FROM payment_methods WHERE id IN ('39f0980b-f37e-46df-abf3-b234a81d5dfb', 'b52def10-a1a6-4ac9-8ca6-b688649bdab8');
