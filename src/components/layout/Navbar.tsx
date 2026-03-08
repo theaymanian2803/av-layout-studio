@@ -183,17 +183,19 @@ export const Navbar = () => {
           </Link>
 
           {/* Shop Mega Trigger */}
-          <button
-            ref={triggerRef}
-            onMouseEnter={openMega}
-            onMouseLeave={closeMega}
-            onClick={() => setMegaOpen(!megaOpen)}
-            className={`px-3 py-2 text-sm font-medium transition-colors rounded-md flex items-center gap-1 ${
-              megaOpen ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-            }`}
-          >
-            Shop <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`} />
-          </button>
+          {megaEnabled && (
+            <button
+              ref={triggerRef}
+              onMouseEnter={openMega}
+              onMouseLeave={closeMega}
+              onClick={() => setMegaOpen(!megaOpen)}
+              className={`px-3 py-2 text-sm font-medium transition-colors rounded-md flex items-center gap-1 ${
+                megaOpen ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              }`}
+            >
+              Shop <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${megaOpen ? "rotate-180" : ""}`} />
+            </button>
+          )}
 
           <Link to="/catalog" className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-secondary/50">
             Catalog
