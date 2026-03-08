@@ -36,7 +36,7 @@ export const PromoPopup = () => {
 
   const handleClose = () => {
     setOpen(false);
-    sessionStorage.setItem("promo_popup_dismissed", "true");
+    localStorage.setItem("promo_popup_dismissed", "true");
   };
 
   if (!popupSection) return null;
