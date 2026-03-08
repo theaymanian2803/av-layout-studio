@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Plus, CreditCard, Trash2, Star } from "lucide-react";
+import { Plus, CreditCard, Trash2, Star, Wallet, Banknote } from "lucide-react";
 
 interface PaymentMethod {
   id: string;
@@ -21,26 +21,15 @@ interface PaymentMethod {
   is_default: boolean;
 }
 
-const brandIcons: Record<string, string> = {
-  Visa: "💳",
-  Mastercard: "💳",
-  Amex: "💳",
-  Discover: "💳",
-};
-
 const PaymentMethods = () => {
   const { user } = useAuth();
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({
-    card_brand: "Visa",
-    last_four: "",
-    expiry_month: new Date().getMonth() + 1,
-    expiry_year: new Date().getFullYear(),
-    cardholder_name: "",
-    is_default: false,
-  });
+  const [methodType, setMethodType] = useState<"paypal" | "cod">("paypal");
+  const [paypalEmail, setPaypalEmail] = useState("");
+  const [codName, setCodName] = useState("");
+  const [isDefault, setIsDefault] = useState(false);
 
   const fetchMethods = async () => {
     if (!user) return;
@@ -55,26 +44,46 @@ const PaymentMethods = () => {
 
   useEffect(() => { fetchMethods(); }, [user]);
 
+  const resetForm = () => {
+    setMethodType("paypal");
+    setPaypalEmail("");
+    setCodName("");
+    setIsDefault(false);
+  };
+
   const handleSubmit = async () => {
-    if (!user || !form.cardholder_name || form.last_four.length !== 4) {
-      toast.error("Please fill in all fields correctly (last 4 digits only)");
+    if (!user) return;
+
+    if (methodType === "paypal" && !paypalEmail) {
+      toast.error("Please enter your PayPal email");
+      return;
+    }
+    if (methodType === "cod" && !codName) {
+      toast.error("Please enter a name for this method");
       return;
     }
 
-    if (form.is_default) {
+    if (isDefault) {
       await supabase.from("payment_methods").update({ is_default: false }).eq("user_id", user.id);
     }
 
-    const { error } = await supabase.from("payment_methods").insert({
-      ...form,
+    const payload = {
       user_id: user.id,
-    });
+      card_brand: methodType === "paypal" ? "PayPal" : "COD",
+      last_four: methodType === "paypal" ? paypalEmail.slice(-4) : "0000",
+      expiry_month: 12,
+      expiry_year: 2099,
+      cardholder_name: methodType === "paypal" ? paypalEmail : codName,
+      is_default: isDefault,
+    };
+
+    const { error } = await supabase.from("payment_methods").insert(payload);
 
     if (error) toast.error("Failed to save payment method");
     else {
       toast.success("Payment method added!");
       setDialogOpen(false);
-      setForm({ card_brand: "Visa", last_four: "", expiry_month: new Date().getMonth() + 1, expiry_year: new Date().getFullYear(), cardholder_name: "", is_default: false });
+      resetForm();
       fetchMethods();
     }
   };
@@ -93,67 +102,69 @@ const PaymentMethods = () => {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5" /> Payment Methods</CardTitle>
-            <CardDescription>Save payment methods for faster checkout</CardDescription>
+            <CardDescription>Manage your payment options</CardDescription>
           </div>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Add Card</Button>
+              <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Add Method</Button>
             </DialogTrigger>
             <DialogContent className="max-w-sm">
               <DialogHeader>
                 <DialogTitle>Add Payment Method</DialogTitle>
               </DialogHeader>
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <Label>Card Brand</Label>
-                  <Select value={form.card_brand} onValueChange={v => setForm(f => ({ ...f, card_brand: v }))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Visa">Visa</SelectItem>
-                      <SelectItem value="Mastercard">Mastercard</SelectItem>
-                      <SelectItem value="Amex">American Express</SelectItem>
-                      <SelectItem value="Discover">Discover</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label>Cardholder Name *</Label>
-                  <Input value={form.cardholder_name} onChange={e => setForm(f => ({ ...f, cardholder_name: e.target.value }))} />
-                </div>
-                <div className="space-y-1">
-                  <Label>Last 4 Digits *</Label>
-                  <Input maxLength={4} value={form.last_four} onChange={e => setForm(f => ({ ...f, last_four: e.target.value.replace(/\D/g, "").slice(0, 4) }))} placeholder="1234" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-4">
+                <RadioGroup value={methodType} onValueChange={(v) => setMethodType(v as "paypal" | "cod")} className="space-y-3">
+                  <label
+                    htmlFor="paypal"
+                    className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                      methodType === "paypal" ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <RadioGroupItem value="paypal" id="paypal" />
+                    <div className={`p-2 rounded-lg ${methodType === "paypal" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      <Wallet className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">PayPal</p>
+                      <p className="text-xs text-muted-foreground">Link your PayPal account</p>
+                    </div>
+                  </label>
+                  <label
+                    htmlFor="cod"
+                    className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                      methodType === "cod" ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <RadioGroupItem value="cod" id="cod" />
+                    <div className={`p-2 rounded-lg ${methodType === "cod" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      <Banknote className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Cash on Delivery</p>
+                      <p className="text-xs text-muted-foreground">Pay when order arrives</p>
+                    </div>
+                  </label>
+                </RadioGroup>
+
+                {methodType === "paypal" && (
                   <div className="space-y-1">
-                    <Label>Expiry Month</Label>
-                    <Select value={String(form.expiry_month)} onValueChange={v => setForm(f => ({ ...f, expiry_month: Number(v) }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 12 }, (_, i) => (
-                          <SelectItem key={i + 1} value={String(i + 1)}>{String(i + 1).padStart(2, "0")}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label>PayPal Email</Label>
+                    <Input type="email" value={paypalEmail} onChange={e => setPaypalEmail(e.target.value)} placeholder="you@example.com" />
                   </div>
+                )}
+
+                {methodType === "cod" && (
                   <div className="space-y-1">
-                    <Label>Expiry Year</Label>
-                    <Select value={String(form.expiry_year)} onValueChange={v => setForm(f => ({ ...f, expiry_year: Number(v) }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 10 }, (_, i) => {
-                          const yr = new Date().getFullYear() + i;
-                          return <SelectItem key={yr} value={String(yr)}>{yr}</SelectItem>;
-                        })}
-                      </SelectContent>
-                    </Select>
+                    <Label>Label / Name</Label>
+                    <Input value={codName} onChange={e => setCodName(e.target.value)} placeholder="e.g. Home delivery" />
                   </div>
-                </div>
+                )}
+
                 <div className="flex items-center gap-2">
-                  <Switch checked={form.is_default} onCheckedChange={v => setForm(f => ({ ...f, is_default: v }))} />
+                  <Switch checked={isDefault} onCheckedChange={setIsDefault} />
                   <Label>Set as default</Label>
                 </div>
-                <Button className="w-full" onClick={handleSubmit}>Save Card</Button>
+                <Button className="w-full" onClick={handleSubmit}>Save Method</Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -165,24 +176,31 @@ const PaymentMethods = () => {
             <p className="text-muted-foreground text-sm text-center py-8">No payment methods saved yet.</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
-              {methods.map(m => (
-                <div key={m.id} className="border rounded-lg p-4 relative group hover:border-primary/30 transition-colors">
-                  {m.is_default && (
-                    <span className="absolute top-2 right-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Star className="h-3 w-3" /> Default
-                    </span>
-                  )}
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">{brandIcons[m.card_brand] || "💳"}</span>
-                    <span className="font-semibold text-sm">{m.card_brand}</span>
+              {methods.map(m => {
+                const isPayPal = m.card_brand === "PayPal";
+                const isCOD = m.card_brand === "COD";
+                return (
+                  <div key={m.id} className="border rounded-lg p-4 relative group hover:border-primary/30 transition-colors">
+                    {m.is_default && (
+                      <span className="absolute top-2 right-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Star className="h-3 w-3" /> Default
+                      </span>
+                    )}
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 rounded-lg bg-muted">
+                        {isPayPal ? <Wallet className="h-4 w-4" /> : <Banknote className="h-4 w-4" />}
+                      </div>
+                      <span className="font-semibold text-sm">{isPayPal ? "PayPal" : "Cash on Delivery"}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {isPayPal ? m.cardholder_name : m.cardholder_name}
+                    </p>
+                    <Button variant="ghost" size="sm" className="mt-2 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(m.id)}>
+                      <Trash2 className="h-3 w-3 mr-1" /> Remove
+                    </Button>
                   </div>
-                  <p className="text-sm font-mono tracking-widest text-muted-foreground">•••• •••• •••• {m.last_four}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{m.cardholder_name} · Exp {String(m.expiry_month).padStart(2, "0")}/{m.expiry_year}</p>
-                  <Button variant="ghost" size="sm" className="mt-2 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(m.id)}>
-                    <Trash2 className="h-3 w-3 mr-1" /> Remove
-                  </Button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
