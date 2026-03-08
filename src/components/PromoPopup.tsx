@@ -112,6 +112,16 @@ export const PromoPopup = () => {
                 Start Shopping
               </Button>
 
+              {imageUrl && (
+                <div className="mt-5 rounded-xl overflow-hidden">
+                  <img
+                    src={imageUrl}
+                    alt="Promo"
+                    className="w-full h-auto object-cover rounded-xl"
+                  />
+                </div>
+              )}
+
               <p className="text-xs text-muted-foreground mt-4">
                 *Terms and conditions apply
               </p>
