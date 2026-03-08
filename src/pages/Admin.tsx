@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, Routes, Route } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useProducts";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Package, ShoppingBag, Star, Loader2, ShieldAlert, Tag, Layers, LayoutDashboard, Users, BarChart3, Percent, Upload, Gift } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
 import { motion } from "framer-motion";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminReviews } from "@/components/admin/AdminReviews";
@@ -47,41 +48,38 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-
-          <Tabs defaultValue="dashboard">
-            <TabsList className="mb-6 flex-wrap">
-              <TabsTrigger value="dashboard"><BarChart3 className="h-4 w-4 mr-2" /> Dashboard</TabsTrigger>
-              <TabsTrigger value="landing"><LayoutDashboard className="h-4 w-4 mr-2" /> Landing Page</TabsTrigger>
-              <TabsTrigger value="products"><Package className="h-4 w-4 mr-2" /> Products</TabsTrigger>
-              <TabsTrigger value="brands"><Tag className="h-4 w-4 mr-2" /> Brands</TabsTrigger>
-              <TabsTrigger value="categories"><Layers className="h-4 w-4 mr-2" /> Categories</TabsTrigger>
-              <TabsTrigger value="orders"><ShoppingBag className="h-4 w-4 mr-2" /> Orders</TabsTrigger>
-              <TabsTrigger value="reviews"><Star className="h-4 w-4 mr-2" /> Reviews</TabsTrigger>
-              <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" /> Users</TabsTrigger>
-              <TabsTrigger value="coupons"><Percent className="h-4 w-4 mr-2" /> Coupons</TabsTrigger>
-              <TabsTrigger value="import"><Upload className="h-4 w-4 mr-2" /> Import</TabsTrigger>
-              <TabsTrigger value="popup"><Gift className="h-4 w-4 mr-2" /> Popup</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="dashboard"><AdminDashboard /></TabsContent>
-            <TabsContent value="landing"><AdminLandingPage /></TabsContent>
-            <TabsContent value="products"><AdminProducts /></TabsContent>
-            <TabsContent value="brands"><AdminBrands /></TabsContent>
-            <TabsContent value="categories"><AdminCategories /></TabsContent>
-            <TabsContent value="orders"><AdminOrders /></TabsContent>
-            <TabsContent value="reviews"><AdminReviews /></TabsContent>
-            <TabsContent value="users"><AdminUsers /></TabsContent>
-            <TabsContent value="coupons"><AdminCoupons /></TabsContent>
-            <TabsContent value="import"><AdminBulkImport /></TabsContent>
-            <TabsContent value="popup"><AdminPromoPopup /></TabsContent>
-          </Tabs>
-        </motion.div>
+    <SidebarProvider>
+      <div className="min-h-[calc(100vh-4rem)] flex w-full">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="h-12 flex items-center border-b px-4 gap-3">
+            <SidebarTrigger />
+            <h1 className="text-lg font-bold">Admin</h1>
+          </header>
+          <main className="flex-1 overflow-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-6"
+            >
+              <Routes>
+                <Route index element={<AdminDashboard />} />
+                <Route path="landing" element={<AdminLandingPage />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="brands" element={<AdminBrands />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="reviews" element={<AdminReviews />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="coupons" element={<AdminCoupons />} />
+                <Route path="import" element={<AdminBulkImport />} />
+                <Route path="popup" element={<AdminPromoPopup />} />
+              </Routes>
+            </motion.div>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

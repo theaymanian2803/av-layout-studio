@@ -53,7 +53,7 @@ const AppInner = () => {
           <Route path="/account" element={<Account />} />
           <Route path="/profile" element={<Navigate to="/account" replace />} />
           <Route path="/favorites" element={<Favorites />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/*" element={<Admin />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
