@@ -24,11 +24,16 @@ export const Navbar = () => {
   const { data: isAdmin } = useIsAdmin();
   const { categories, brands, subcategories } = useBrandsAndCategories();
   const { data: products = [] } = useProducts();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const megaRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const openMega = () => {
