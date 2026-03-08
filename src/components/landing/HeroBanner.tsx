@@ -114,44 +114,45 @@ export const HeroBanner = () => {
             </AnimatePresence>
           </div>
 
-          {/* Image side — large with clip-path */}
-          <div className="flex-1 flex justify-center items-center relative min-h-[360px] md:min-h-[480px]">
-            {/* Decorative ring */}
-            <div className="absolute w-[380px] h-[380px] md:w-[520px] md:h-[520px] rounded-full border border-primary/10 pointer-events-none" />
-
+          {/* Image side — triangle clip design */}
+          <div className="flex-1 flex justify-center items-center relative min-h-[360px] md:min-h-[500px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, scale: 0.85 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85 }}
+                exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.5 }}
-                className="relative w-[320px] h-[380px] md:w-[440px] md:h-[520px]"
+                className="relative w-[340px] h-[400px] md:w-[480px] md:h-[540px]"
               >
-                {/* Primary clipped image */}
+                {/* Main image — diagonal triangle cut */}
                 <div
-                  className="absolute inset-0 overflow-hidden shadow-2xl shadow-primary/15"
-                  style={{ clipPath: "polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%)" }}
+                  className="absolute inset-0 overflow-hidden"
+                  style={{ clipPath: "polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%)" }}
                 >
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover scale-105"
                   />
-                  {/* Gradient overlay at bottom */}
-                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/60 to-transparent" />
                 </div>
 
-                {/* Accent outline shape offset behind */}
+                {/* Accent triangle — top-left corner */}
                 <div
-                  className="absolute -top-3 -left-3 w-full h-full border-2 border-primary/20 pointer-events-none"
-                  style={{ clipPath: "polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%)" }}
+                  className="absolute -top-2 -left-2 w-[120px] h-[120px] md:w-[160px] md:h-[160px] bg-gradient-to-br from-primary to-primary/60"
+                  style={{ clipPath: "polygon(0% 0%, 100% 0%, 0% 100%)" }}
                 />
 
-                {/* Second accent shape — small triangle cut */}
+                {/* Accent triangle — bottom-right corner */}
                 <div
-                  className="absolute -bottom-4 -right-4 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-accent to-primary opacity-80"
+                  className="absolute -bottom-2 -right-2 w-[100px] h-[100px] md:w-[140px] md:h-[140px] bg-gradient-to-tl from-accent to-accent/60"
                   style={{ clipPath: "polygon(100% 0%, 100% 100%, 0% 100%)" }}
+                />
+
+                {/* Thin border outline offset */}
+                <div
+                  className="absolute top-2 left-2 right-[-4px] bottom-[-4px] border-2 border-primary/15 pointer-events-none"
+                  style={{ clipPath: "polygon(20% 0%, 100% 0%, 100% 80%, 80% 100%, 0% 100%, 0% 20%)" }}
                 />
 
                 {/* Floating badge */}
@@ -159,7 +160,7 @@ export const HeroBanner = () => {
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4, type: "spring" }}
-                  className="absolute -bottom-3 left-4 bg-accent text-accent-foreground px-4 py-2 rounded-xl font-black text-sm shadow-lg shadow-accent/30"
+                  className="absolute bottom-6 left-6 bg-accent text-accent-foreground px-4 py-2 rounded-xl font-black text-sm shadow-lg shadow-accent/30 z-10"
                 >
                   {product.in_stock ? "IN STOCK" : "SOLD OUT"}
                 </motion.div>
