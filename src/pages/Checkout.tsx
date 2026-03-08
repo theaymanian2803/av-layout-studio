@@ -258,7 +258,7 @@ const Checkout = () => {
       const { data: paypalData, error: paypalError } = await supabase.functions.invoke("paypal", {
         body: {
           action: "create-order",
-          amount: totalPrice.toFixed(2),
+          amount: finalPrice.toFixed(2),
           return_url: `${currentUrl}?paypal=success`,
           cancel_url: `${currentUrl}?paypal=cancel`,
         },
