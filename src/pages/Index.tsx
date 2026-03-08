@@ -4,39 +4,49 @@ import { ProductRow } from "@/components/landing/ProductRow";
 import { BrandsStrip } from "@/components/landing/BrandsStrip";
 import { FeaturedBrandSection } from "@/components/landing/FeaturedBrandSection";
 import { PromoBanner } from "@/components/landing/PromoBanner";
+import { useLandingSections, LandingSection } from "@/hooks/useLandingSections";
+import { Loader2 } from "lucide-react";
+
+const SectionRenderer = ({ section }: { section: LandingSection }) => {
+  const type = (section.config as any)?.type;
+  const category = (section.config as any)?.category;
+
+  switch (type) {
+    case "hero":
+      return <HeroBanner />;
+    case "categories":
+      return <CategoryBanner />;
+    case "promo":
+      return <PromoBanner />;
+    case "product_row":
+      return <ProductRow title={section.title} category={category} />;
+    case "brands_strip":
+      return <BrandsStrip />;
+    case "featured_brand":
+      return <FeaturedBrandSection />;
+    default:
+      return null;
+  }
+};
 
 const Index = () => {
+  const { data: sections = [], isLoading } = useLandingSections();
+
+  const visibleSections = sections
+    .filter((s) => s.visible)
+    .sort((a, b) => a.sort_order - b.sort_order);
+
   return (
     <div className="min-h-screen">
-      {/* Hero Carousel */}
-      <HeroBanner />
-
-      {/* Category Cards with Images */}
-      <CategoryBanner />
-
-      {/* Promo Deals Banner */}
-      <PromoBanner />
-
-      {/* Product Row: Cameras */}
-      <ProductRow title="📷 Cameras" category="Cameras" />
-
-      {/* Product Row: Audio */}
-      <ProductRow title="🎙 Audio Gear" category="Audio" />
-
-      {/* Brands Strip */}
-      <BrandsStrip />
-
-      {/* Shop by Brand with Tab Selector */}
-      <FeaturedBrandSection />
-
-      {/* Product Row: Lenses */}
-      <ProductRow title="🔘 Lenses" category="Lenses" />
-
-      {/* Product Row: Lighting */}
-      <ProductRow title="💡 Lighting" category="Lighting" />
-
-      {/* Product Row: Accessories */}
-      <ProductRow title="🛠 Accessories" category="Accessories" />
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        visibleSections.map((section) => (
+          <SectionRenderer key={section.id} section={section} />
+        ))
+      )}
     </div>
   );
 };
