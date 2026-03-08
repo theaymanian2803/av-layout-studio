@@ -46,7 +46,41 @@ const Checkout = () => {
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("paypal");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount_type: string; discount_value: number } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const captureAttempted = useRef(false);
+
+  const discount = appliedCoupon
+    ? appliedCoupon.discount_type === "percentage"
+      ? totalPrice * (appliedCoupon.discount_value / 100)
+      : appliedCoupon.discount_value
+    : 0;
+  const finalPrice = Math.max(0, totalPrice - discount);
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("coupons")
+        .select("*")
+        .eq("code", couponCode.toUpperCase().trim())
+        .eq("active", true)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) { toast.error("Invalid coupon code"); return; }
+      if (data.expires_at && new Date(data.expires_at) < new Date()) { toast.error("Coupon has expired"); return; }
+      if (data.max_uses !== null && data.used_count >= data.max_uses) { toast.error("Coupon usage limit reached"); return; }
+      if (data.min_order_amount && totalPrice < data.min_order_amount) { toast.error(`Minimum order $${data.min_order_amount} required`); return; }
+      setAppliedCoupon({ code: data.code, discount_type: data.discount_type, discount_value: data.discount_value });
+      toast.success(`Coupon "${data.code}" applied!`);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
   // Saved data
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
