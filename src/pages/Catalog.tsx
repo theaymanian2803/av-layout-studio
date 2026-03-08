@@ -18,6 +18,7 @@ const Catalog = () => {
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const { addItem } = useCart();
   const { data: products = [], isLoading } = useProducts();
+  const { brands: dbBrands, categories: dbCategories } = useBrandsAndCategories();
 
   const selectedCategory = searchParams.get("category") || "";
   const selectedBrand = searchParams.get("brand") || "";
