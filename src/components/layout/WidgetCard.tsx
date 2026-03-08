@@ -12,7 +12,7 @@ interface WidgetCardProps {
 }
 
 export const WidgetCard = ({ id, isEditing, children, className }: WidgetCardProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, resizeObserverConfig: { disabled: true } });
 
   const style = {
     transform: CSS.Transform.toString(transform),
