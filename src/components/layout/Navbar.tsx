@@ -354,7 +354,7 @@ export const Navbar = () => {
                   <div className="mt-6 pt-4 border-t">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-3 px-2">Top Brands</p>
                     <div className="flex flex-wrap gap-1.5 px-2">
-                      {brands.slice(0, 6).map((brand: any) => (
+                      {displayBrands.map((brand: any) => (
                         <Link
                           key={brand.id}
                           to={`/catalog?brand=${brand.name}`}
