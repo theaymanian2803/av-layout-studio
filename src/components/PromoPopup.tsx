@@ -89,7 +89,7 @@ export const PromoPopup = () => {
                   className="h-12 w-12 rounded-xl border-2 shrink-0"
                 >
                   {copied ? (
-                    <Check className="h-5 w-5 text-green-500" />
+                    <Check className="h-5 w-5 text-accent" />
                   ) : (
                     <Copy className="h-5 w-5" />
                   )}
