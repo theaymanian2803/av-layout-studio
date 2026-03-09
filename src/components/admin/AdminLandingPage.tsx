@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   Eye, EyeOff, GripVertical, Pencil, Trash2, Plus, ArrowUp, ArrowDown,
@@ -52,6 +53,7 @@ export const AdminLandingPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<LandingSection>>({});
   const [addOpen, setAddOpen] = useState(false);
+  const [deleteSection, setDeleteSection] = useState<LandingSection | null>(null);
   const [newSection, setNewSection] = useState({ title: "", type: "product_row", category: "", subtitle: "", image_url: "", cta_text: "", cta_link: "", headline: "", description: "", hero_image: "", product_ids: "" });
 
   const handleToggleVisibility = (section: LandingSection) => {
@@ -132,9 +134,16 @@ export const AdminLandingPage = () => {
   };
 
   const handleDelete = (section: LandingSection) => {
-    if (!confirm(`Delete "${section.title}"? This cannot be undone.`)) return;
-    deleteMutation.mutate(section.id, {
-      onSuccess: () => toast.success("Section deleted"),
+    setDeleteSection(section);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteSection) return;
+    deleteMutation.mutate(deleteSection.id, {
+      onSuccess: () => {
+        toast.success("Section deleted");
+        setDeleteSection(null);
+      },
     });
   };
 
@@ -482,6 +491,27 @@ export const AdminLandingPage = () => {
           No landing page sections configured. Click "Add Section" to get started.
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteSection} onOpenChange={() => setDeleteSection(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Landing Section</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{deleteSection?.title}"? This action cannot be undone and will permanently remove this section from your landing page.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Section
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
