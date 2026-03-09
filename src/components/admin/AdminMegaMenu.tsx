@@ -45,6 +45,8 @@ export const AdminMegaMenu = () => {
         announcement_enabled: config?.announcement_enabled ?? true,
         announcement_text: config?.announcement_text || "",
         announcement_link: config?.announcement_link || "",
+        announcement_bg_color: config?.announcement_bg_color || "#000000",
+        announcement_text_color: config?.announcement_text_color || "#ffffff",
         top_brand_ids: config?.top_brand_ids || [],
         featured_product_ids: config?.featured_product_ids || {},
       });
