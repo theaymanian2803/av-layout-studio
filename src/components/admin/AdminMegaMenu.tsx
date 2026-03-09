@@ -29,6 +29,8 @@ export const AdminMegaMenu = () => {
     announcement_enabled: true,
     announcement_text: "🚚 Free Shipping on orders over $99 — Use code AVFREE at checkout",
     announcement_link: "",
+    announcement_bg_color: "#000000",
+    announcement_text_color: "#ffffff",
     top_brand_ids: [] as string[],
     featured_product_ids: {} as Record<string, string[]>,
   });
