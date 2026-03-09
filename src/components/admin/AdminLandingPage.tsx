@@ -491,6 +491,27 @@ export const AdminLandingPage = () => {
           No landing page sections configured. Click "Add Section" to get started.
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteSection} onOpenChange={() => setDeleteSection(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Landing Section</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{deleteSection?.title}"? This action cannot be undone and will permanently remove this section from your landing page.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Section
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
