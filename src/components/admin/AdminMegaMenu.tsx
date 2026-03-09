@@ -29,6 +29,8 @@ export const AdminMegaMenu = () => {
     announcement_enabled: true,
     announcement_text: "🚚 Free Shipping on orders over $99 — Use code AVFREE at checkout",
     announcement_link: "",
+    announcement_bg_color: "#000000",
+    announcement_text_color: "#ffffff",
     top_brand_ids: [] as string[],
     featured_product_ids: {} as Record<string, string[]>,
   });
@@ -43,6 +45,8 @@ export const AdminMegaMenu = () => {
         announcement_enabled: config?.announcement_enabled ?? true,
         announcement_text: config?.announcement_text || "",
         announcement_link: config?.announcement_link || "",
+        announcement_bg_color: config?.announcement_bg_color || "#000000",
+        announcement_text_color: config?.announcement_text_color || "#ffffff",
         top_brand_ids: config?.top_brand_ids || [],
         featured_product_ids: config?.featured_product_ids || {},
       });
@@ -168,6 +172,26 @@ export const AdminMegaMenu = () => {
               onChange={(e) => setForm((p) => ({ ...p, announcement_link: e.target.value }))}
               placeholder="e.g. /catalog?sale=true"
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Background Color</Label>
+              <Input
+                type="color"
+                value={form.announcement_bg_color}
+                onChange={(e) => setForm((p) => ({ ...p, announcement_bg_color: e.target.value }))}
+                className="w-full h-10"
+              />
+            </div>
+            <div>
+              <Label>Text Color</Label>
+              <Input
+                type="color"
+                value={form.announcement_text_color}
+                onChange={(e) => setForm((p) => ({ ...p, announcement_text_color: e.target.value }))}
+                className="w-full h-10"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
