@@ -134,9 +134,16 @@ export const AdminLandingPage = () => {
   };
 
   const handleDelete = (section: LandingSection) => {
-    if (!confirm(`Delete "${section.title}"? This cannot be undone.`)) return;
-    deleteMutation.mutate(section.id, {
-      onSuccess: () => toast.success("Section deleted"),
+    setDeleteSection(section);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteSection) return;
+    deleteMutation.mutate(deleteSection.id, {
+      onSuccess: () => {
+        toast.success("Section deleted");
+        setDeleteSection(null);
+      },
     });
   };
 
