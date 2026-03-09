@@ -173,6 +173,26 @@ export const AdminMegaMenu = () => {
               placeholder="e.g. /catalog?sale=true"
             />
           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Background Color</Label>
+              <Input
+                type="color"
+                value={form.announcement_bg_color}
+                onChange={(e) => setForm((p) => ({ ...p, announcement_bg_color: e.target.value }))}
+                className="w-full h-10"
+              />
+            </div>
+            <div>
+              <Label>Text Color</Label>
+              <Input
+                type="color"
+                value={form.announcement_text_color}
+                onChange={(e) => setForm((p) => ({ ...p, announcement_text_color: e.target.value }))}
+                className="w-full h-10"
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
 
