@@ -1,73 +1,72 @@
-# Welcome to your Lovable project
+# Gear Canvas
 
-## Project info
+Build a full-stack e-commerce web application specifically for professional Camera, Audio, and Visual equipment. The defining feature of this app is a "Customizable Storefront Layout" where authenticated users can drag, drop, and rearrange the layout of the website to suit their browsing preferences.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Tech Stack:
 
-## How can I edit this code?
+Frontend: React, Tailwind CSS, Shadcn UI, Framer Motion (for smooth drag-and-drop animations), and React Beautiful DnD (or similar drag-and-drop library).
 
-There are several ways of editing your application.
+Backend/Database: Supabase (for Authentication, PostgreSQL database, and Storage).
 
-**Use Lovable**
+Core Features & Pages:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Dynamic Homepage (The Layout Engine): * Implement a widget-based grid system.
 
-Changes made via Lovable will be committed automatically to this repo.
+Provide an "Edit Layout" toggle switch. When active, users can drag and drop different UI blocks (e.g., "Featured Cameras," "New Audio Gear," "Current Deals Slider," "Top Brands Grid").
 
-**Use your preferred IDE**
+Save the user's layout preferences to their profile in the database so it persists across sessions.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Product Catalog & Filtering: * Categories for: Cameras (DSLR, Mirrorless, Cinema), Lenses, Audio (Microphones, Mixers), Lighting, and Accessories.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Advanced filtering: Filter by brand (Sony, Canon, Rode, Shure), price range, sensor size, and mount type.
 
-Follow these steps:
+Toggleable views: Allow users to switch between a dense grid view and a detailed list view.
+
+Product Detail Page (PDP): * High-quality image gallery, technical specifications table, price, stock status, and an "Add to Cart" button.
+
+Include a section for "Compatible Accessories" (e.g., suggesting a specific lens for a camera body).
+
+Shopping Cart & Checkout: * A slide-out cart sidebar.
+
+Order summary, quantity adjustments, and a mock checkout flow.
+
+User Authentication & Dashboard: * Sign up/Login via Supabase.
+
+User dashboard to view order history, manage shipping addresses, and a dedicated tab to reset or tweak their custom homepage layout settings.
+
+Design System & UI/UX:
+
+Theme: Modern, sleek, and "tech-focused." Use a dark mode by default with deep blacks, dark grays, and a vivid accent color (like neon blue or vibrant orange) to highlight buttons and prices.
+
+Typography: Clean, sans-serif fonts (like Inter or Roboto) for high legibility on technical specs.
+
+Interactions: Use Shadcn UI for clean, accessible components. Add smooth hover states on product cards and satisfying snap-to-grid animations when users are customizing their layout.
+
+Initial Setup Instructions for the AI:
+
+Scaffold the React application and set up the routing for Home, Catalog, Product Details, Cart, and Profile.
+
+Create dummy JSON data for at least 15 A/V and camera products to populate the store immediately.
+
+Build the draggable layout grid component first, as it is the core feature of the app. Ensure it has a fallback default layout for non-logged-in users.
+
+This project was built with [Lovable](https://lovable.dev).
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/42ab062e-aeee-45e2-ba7c-5fa701568e4f).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
