@@ -12,7 +12,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Nunito Sans', 'ui-rounded', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -32,6 +32,10 @@ export default {
         surface: "hsl(var(--surface))",
         "surface-hover": "hsl(var(--surface-hover))",
         price: "hsl(var(--price))",
+        "pet-yellow": "hsl(var(--pet-yellow))",
+        "pet-coral": "hsl(var(--pet-coral))",
+        "pet-mint": "hsl(var(--pet-mint))",
+        "pet-ink": "hsl(var(--pet-ink))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
