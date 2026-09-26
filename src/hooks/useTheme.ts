@@ -5,18 +5,18 @@ type Theme = "light" | "dark";
 export const useTheme = () => {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("av-theme") as Theme | null;
+      const stored = (localStorage.getItem("petpaw-theme") || localStorage.getItem("av-theme")) as Theme | null;
       if (stored) return stored;
       return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
-    return "dark";
+    return "light";
   });
 
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
-    localStorage.setItem("av-theme", theme);
+    localStorage.setItem("petpaw-theme", theme);
   }, [theme]);
 
   const toggleTheme = () => setThemeState((t) => (t === "dark" ? "light" : "dark"));
