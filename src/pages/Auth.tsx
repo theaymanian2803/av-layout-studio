@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Camera, Loader2 } from "lucide-react";
+import { PawPrint, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -96,8 +96,8 @@ const Auth = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 text-2xl font-bold">
-            <Camera className="h-7 w-7 text-primary" />
-            AV<span className="text-primary">Store</span>
+             <PawPrint className="h-7 w-7 text-primary" />
+             Pet<span className="text-primary">Paw</span>
           </Link>
         </div>
 
@@ -114,7 +114,7 @@ const Auth = () => {
               <form onSubmit={handleLogin}>
                 <CardContent className="space-y-4">
                   <CardTitle>Welcome back</CardTitle>
-                  <CardDescription>Sign in to access your custom layout and order history.</CardDescription>
+                   <CardDescription>Sign in to access your favorites, orders, and saved details.</CardDescription>
                   <GoogleButton />
                   <div><Label htmlFor="login-email">Email</Label><Input id="login-email" type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required /></div>
                   <div><Label htmlFor="login-password">Password</Label><Input id="login-password" type="password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} required /></div>
@@ -131,7 +131,7 @@ const Auth = () => {
               <form onSubmit={handleSignup}>
                 <CardContent className="space-y-4">
                   <CardTitle>Create an account</CardTitle>
-                  <CardDescription>Sign up to save your layout preferences and track orders.</CardDescription>
+                   <CardDescription>Sign up to save favorites and track every PetPaw order.</CardDescription>
                   <GoogleButton />
                   <div><Label htmlFor="signup-name">Display Name</Label><Input id="signup-name" value={signupName} onChange={e => setSignupName(e.target.value)} /></div>
                   <div><Label htmlFor="signup-email">Email</Label><Input id="signup-email" type="email" value={signupEmail} onChange={e => setSignupEmail(e.target.value)} required /></div>

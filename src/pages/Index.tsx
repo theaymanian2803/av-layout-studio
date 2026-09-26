@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Bird, Bone, Cat, Dog, Fish, Headphones, Heart, PackageCheck, PawPrint, Quote, ShieldCheck, Star, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProducts, DbProduct } from "@/hooks/useProducts";
+import { useLandingSections } from "@/hooks/useLandingSections";
 import { useCart } from "@/contexts/CartContext";
 
 const heroImage = "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1800&q=85";
@@ -57,11 +58,13 @@ const ProductShelf = ({ title, subtitle, products }: { title: string; subtitle: 
 
 const Index = () => {
   const { data: products = [], isLoading } = useProducts();
+  const { data: sections = [] } = useLandingSections();
   const highlights = [...products].sort((a, b) => (b.rating || 0) - (a.rating || 0));
   const deals = products.filter((p) => p.original_price).concat(products.filter((p) => !p.original_price));
+  const isVisible = (key: string) => sections.find((section) => section.section_key === key)?.visible !== false;
 
   return <main className="overflow-hidden bg-background">
-    <section className="container mx-auto grid gap-4 px-4 py-4 lg:grid-cols-[1.75fr_1fr]">
+    {isVisible("hero_banner") && <section className="container mx-auto grid gap-4 px-4 py-4 lg:grid-cols-[1.75fr_1fr]">
       <div className="relative min-h-[390px] overflow-hidden rounded-md bg-primary">
         <img src={heroImage} alt="Happy golden retriever with premium dog food" width={1536} height={960} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/55 to-transparent" />
@@ -82,16 +85,16 @@ const Index = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-pet-coral/90 via-pet-coral/45 to-transparent" /><div className="relative z-10 max-w-[52%] p-6 text-pet-ink"><p className="text-lg font-extrabold">Treat time</p><p className="mt-1 text-sm">Natural bites they love</p><p className="mt-4 text-2xl font-extrabold">Buy 2, save 15%</p></div>
         </Link>
       </div>
-    </section>
+    </section>}
 
-    <section className="container mx-auto px-4 py-8"><div className="grid grid-cols-3 gap-4 md:grid-cols-6">{categories.map(({ name, icon: Icon, tone }, index) => <motion.div key={name} initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * .06 }}><Link to={`/catalog?category=${encodeURIComponent(name)}`} className="group flex flex-col items-center gap-3 text-center"><span className={`flex aspect-square w-full max-w-28 items-center justify-center rounded-full ${tone} transition-transform group-hover:-translate-y-1`}><Icon className="h-10 w-10 text-primary md:h-12 md:w-12" /></span><span className="text-xs font-bold md:text-sm">{name}</span></Link></motion.div>)}</div></section>
+    {isVisible("category_banner") && <section className="container mx-auto px-4 py-8"><div className="grid grid-cols-3 gap-4 md:grid-cols-6">{categories.map(({ name, icon: Icon, tone }, index) => <motion.div key={name} initial={{ opacity: 0, scale: .9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * .06 }}><Link to={`/catalog?category=${encodeURIComponent(name)}`} className="group flex flex-col items-center gap-3 text-center"><span className={`flex aspect-square w-full max-w-28 items-center justify-center rounded-full ${tone} transition-transform group-hover:-translate-y-1`}><Icon className="h-10 w-10 text-primary md:h-12 md:w-12" /></span><span className="text-xs font-bold md:text-sm">{name}</span></Link></motion.div>)}</div></section>}
 
-    {isLoading ? <div className="py-20 text-center text-muted-foreground">Preparing the pantry…</div> : <><ProductShelf title="This Week’s Highlights" subtitle="Wholesome favorites chosen for happy, healthy pets." products={highlights} /><ProductShelf title="Best Selling Items" subtitle="The treats, meals, and essentials pet parents return for." products={deals} /></>}
+    {isLoading ? <div className="py-20 text-center text-muted-foreground">Preparing the pantry…</div> : <>{isVisible("product_row_cameras") && <ProductShelf title="This Week’s Highlights" subtitle="Wholesome favorites chosen for happy, healthy pets." products={highlights} />}{isVisible("product_row_lenses") && <ProductShelf title="Best Selling Items" subtitle="The treats, meals, and essentials pet parents return for." products={deals} />}</>}
 
-    <section className="container mx-auto grid gap-4 px-4 py-8 md:grid-cols-2">
+    {isVisible("promo_banner") && <section className="container mx-auto grid gap-4 px-4 py-8 md:grid-cols-2">
       <Link to="/catalog?category=Dog%20Food" className="relative min-h-[270px] overflow-hidden rounded-md bg-pet-mint/40"><img src={collectionBanner} alt="Pet food collection" loading="lazy" width={1536} height={720} className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-r from-pet-mint via-pet-mint/80 to-transparent" /><div className="relative z-10 max-w-[50%] p-8"><p className="text-2xl font-extrabold">Everyday nutrition, thoughtfully made</p><p className="mt-2 text-sm">Save up to 30%</p><Button size="sm" className="mt-5">Shop food</Button></div></Link>
       <Link to="/catalog?category=Treats" className="relative min-h-[270px] overflow-hidden rounded-md bg-pet-coral/30"><img src={dogPromo} alt="Dog treat collection" loading="lazy" width={992} height={672} className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-r from-pet-coral via-pet-coral/80 to-transparent" /><div className="relative z-10 max-w-[50%] p-8"><p className="text-2xl font-extrabold">Buy one, get one on treats</p><p className="mt-2 text-sm">Weekend offer</p><Button size="sm" className="mt-5">Shop treats</Button></div></Link>
-    </section>
+    </section>}
 
     <section className="container mx-auto px-4 py-10"><div className="mb-6 text-center"><h2 className="text-2xl font-extrabold text-primary">Shop By Departments</h2></div><div className="grid gap-4 md:grid-cols-4">{["Newest", "Featured", "On Sale", "Best Selling"].map((label, col) => <div key={label} className="rounded-md border bg-card p-4"><h3 className="mb-4 border-b pb-3 text-center text-sm font-extrabold">{label}</h3>{products.slice(col * 2, col * 2 + 3).map((p) => <Link key={p.id} to={`/product/${p.id}`} className="flex gap-3 border-b py-3 last:border-0"><img src={p.image} alt="" loading="lazy" width={64} height={64} className="h-16 w-16 object-cover" /><span className="min-w-0"><span className="line-clamp-2 text-xs font-bold">{p.name}</span><span className="mt-1 block text-sm font-extrabold text-primary">${p.price.toFixed(2)}</span></span></Link>)}</div>)}</div></section>
 
@@ -105,7 +108,6 @@ const Index = () => {
       ["https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=900&q=80","Choosing enriching treats without overfeeding","Pet care"],
     ].map(([image,title,tag]) => <article key={title} className="overflow-hidden rounded-md border bg-card"><img src={image} alt="" loading="lazy" width={900} height={600} className="aspect-[3/2] w-full object-cover" /><div className="p-5"><p className="text-xs font-extrabold uppercase text-primary">{tag}</p><h3 className="mt-2 text-lg font-extrabold">{title}</h3><Link to="/help" className="mt-4 inline-block text-sm font-bold text-primary">Read the guide →</Link></div></article>)}</div></section>
 
-    <section className="bg-primary text-primary-foreground"><div className="container mx-auto flex flex-col items-center justify-between gap-5 px-4 py-8 md:flex-row"><div><p className="text-xl font-extrabold">Join the PetPaw pack</p><p className="text-sm text-primary-foreground/80">Get $20 off your first order and practical pet-care notes.</p></div><form className="flex w-full max-w-lg"><input type="email" aria-label="Email address" placeholder="Your email address" className="h-11 flex-1 rounded-l-md border-0 bg-card px-4 text-sm text-foreground outline-none" /><Button type="submit" variant="secondary" className="h-11 rounded-l-none bg-pet-yellow text-pet-ink hover:bg-pet-yellow/90">Subscribe</Button></form></div></section>
   </main>;
 };
 
