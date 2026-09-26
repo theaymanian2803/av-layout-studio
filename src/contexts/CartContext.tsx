@@ -23,14 +23,14 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
-      const saved = localStorage.getItem("av-cart");
+      const saved = localStorage.getItem("petpaw-cart") || localStorage.getItem("av-cart");
       return saved ? JSON.parse(saved) : [];
     } catch { return []; }
   });
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("av-cart", JSON.stringify(items));
+    localStorage.setItem("petpaw-cart", JSON.stringify(items));
   }, [items]);
 
   const addItem = useCallback((product: DbProduct, qty = 1) => {

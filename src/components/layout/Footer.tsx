@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useBrandsAndCategories } from "@/hooks/useProducts";
-import { Camera, Mail, MapPin, Phone, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { PawPrint, Mail, MapPin, Phone, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -30,8 +30,8 @@ export const Footer = () => {
       <div className="bg-primary/5 border-b border-border">
         <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-foreground">Stay in the loop</h3>
-            <p className="text-sm text-muted-foreground">Get deals, new arrivals & pro tips straight to your inbox.</p>
+             <h3 className="text-lg font-bold text-foreground">Join the PetPaw pack</h3>
+             <p className="text-sm text-muted-foreground">Get wholesome deals, new arrivals, and pet-care notes.</p>
           </div>
           <div className="flex w-full md:w-auto gap-2">
             <Input placeholder="Enter your email" className="h-10 w-full md:w-72 bg-background" />
@@ -47,12 +47,12 @@ export const Footer = () => {
           <div className="col-span-2 md:col-span-1 lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center">
-                <Camera className="h-5 w-5 text-primary-foreground" />
+                 <PawPrint className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-black tracking-tight text-foreground">CineGear</span>
+               <span className="text-lg font-black text-foreground">PetPaw</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Your trusted source for professional cameras, lenses, audio, lighting & accessories.
+               Better food, playful treats, and everyday essentials for every member of your pet family.
             </p>
             <div className="flex gap-3">
               {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => (
@@ -123,7 +123,7 @@ export const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <span className="text-sm text-muted-foreground">123 Gear Street, Studio City, CA 91604</span>
+                 <span className="text-sm text-muted-foreground">PetPaw online store · Delivered to your door</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -133,8 +133,8 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                <a href="mailto:support@cinegear.com" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  support@cinegear.com
+                 <a href="mailto:hello@petpaw.com" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                   hello@petpaw.com
                 </a>
               </li>
             </ul>
@@ -146,7 +146,7 @@ export const Footer = () => {
       <div className="border-t border-border">
         <div className="container mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} CineGear. All rights reserved.
+             © {new Date().getFullYear()} PetPaw. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-4">
             {legalLinks.map((item) => (

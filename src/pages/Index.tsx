@@ -4,10 +4,11 @@ import { Bird, Bone, Cat, ChevronRight, Dog, Fish, Headphones, Heart, PackageChe
 import { Button } from "@/components/ui/button";
 import { useProducts, DbProduct } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
-import heroImage from "@/assets/petpaw-hero.jpg";
-import catPromo from "@/assets/cat-food-promo.jpg";
-import dogPromo from "@/assets/dog-treats-promo.jpg";
-import collectionBanner from "@/assets/pet-products-banner.jpg";
+
+const heroImage = "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1800&q=85";
+const catPromo = "https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=1000&q=85";
+const dogPromo = "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1000&q=85";
+const collectionBanner = "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1600&q=85";
 
 const categories = [
   { name: "Dog Food", icon: Dog, tone: "bg-pet-yellow/25" },

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, X, Camera, User, LogIn, Shield, ChevronDown, CircleDot, Mic, Lightbulb, Wrench, Smartphone, Zap, ArrowRight, Search, Sun, Moon, Heart } from "lucide-react";
+import { ShoppingCart, Menu, X, PawPrint, User, LogIn, Shield, ChevronDown, Cat, Dog, Fish, Bird, Bone, Package, ArrowRight, Search, Sun, Moon, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,12 +13,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ThemeContext } from "@/App";
 
 const categoryIcons: Record<string, React.ReactNode> = {
-  Cameras: <Camera className="h-5 w-5" />,
-  Lenses: <CircleDot className="h-5 w-5" />,
-  Audio: <Mic className="h-5 w-5" />,
-  Lighting: <Lightbulb className="h-5 w-5" />,
-  Accessories: <Wrench className="h-5 w-5" />,
-  Phones: <Smartphone className="h-5 w-5" />,
+  "Dog Food": <Dog className="h-5 w-5" />,
+  "Cat Food": <Cat className="h-5 w-5" />,
+  "Fish Food": <Fish className="h-5 w-5" />,
+  "Bird Food": <Bird className="h-5 w-5" />,
+  Treats: <Bone className="h-5 w-5" />,
+  "Pet Supplies": <Package className="h-5 w-5" />,
 };
 
 const ThemeToggle = () => {
@@ -119,7 +119,7 @@ export const Navbar = () => {
   const megaConfig = (megaMenuSection?.config || {}) as any;
   const megaEnabled = megaConfig.mega_enabled !== false;
   const announcementEnabled = megaConfig.announcement_enabled !== false;
-  const announcementText = megaConfig.announcement_text || "🚚 Free Shipping on orders over $99 — Use code AVFREE at checkout";
+  const announcementText = megaConfig.announcement_text || "Free shipping on orders over $75 — everything your pet loves, delivered";
   const announcementLink = megaConfig.announcement_link || "";
   const topBrandIds: string[] = megaConfig.top_brand_ids || [];
   const featuredProductIds: Record<string, string[]> = megaConfig.featured_product_ids || {};
@@ -183,8 +183,8 @@ export const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-          <Camera className="h-6 w-6 text-primary" />
-          <span className="hidden sm:inline">AV<span className="text-primary">Store</span></span>
+           <PawPrint className="h-7 w-7 text-primary" />
+           <span className="hidden text-xl font-black sm:inline">Pet<span className="text-primary">Paw</span></span>
         </Link>
 
         {/* Desktop Nav */}
@@ -230,7 +230,7 @@ export const Navbar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
-                placeholder="Search products…"
+                 placeholder="Search food, treats & supplies…"
                 className="w-full h-9 pl-9 pr-3 rounded-lg border border-input bg-secondary/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
               />
             </div>
@@ -353,7 +353,7 @@ export const Navbar = () => {
                         }`}
                       >
                         <span className={activeCat === cat.name ? "text-primary" : "text-muted-foreground"}>
-                          {categoryIcons[cat.name] || <Wrench className="h-5 w-5" />}
+                           {categoryIcons[cat.name] || <PawPrint className="h-5 w-5" />}
                         </span>
                         {cat.name}
                         <ArrowRight className={`h-3.5 w-3.5 ml-auto transition-opacity ${activeCat === cat.name ? "opacity-100" : "opacity-0"}`} />
@@ -401,7 +401,7 @@ export const Navbar = () => {
                           onClick={() => setMegaOpen(false)}
                           className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all"
                         >
-                          <Zap className="h-3 w-3 text-accent" />
+                           <PawPrint className="h-3 w-3 text-accent" />
                           {sub.name}
                         </Link>
                       ))
@@ -417,7 +417,7 @@ export const Navbar = () => {
                       onClick={() => setMegaOpen(false)}
                       className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary/10 text-primary text-sm font-semibold hover:bg-primary/20 transition-all"
                     >
-                      <span className={activeCat ? "" : ""}>{categoryIcons[activeCat || ""] || <Camera className="h-4 w-4" />}</span>
+                       <span>{categoryIcons[activeCat || ""] || <PawPrint className="h-4 w-4" />}</span>
                       Browse All {activeCat}
                       <ArrowRight className="h-4 w-4" />
                     </Link>
@@ -487,7 +487,7 @@ export const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-3 py-2.5 px-3 text-sm font-medium hover:text-primary hover:bg-secondary/50 rounded-lg transition-all"
                 >
-                  <span className="text-muted-foreground">{categoryIcons[cat.name] || <Wrench className="h-4 w-4" />}</span>
+                   <span className="text-muted-foreground">{categoryIcons[cat.name] || <PawPrint className="h-4 w-4" />}</span>
                   {cat.name}
                 </Link>
               ))}
