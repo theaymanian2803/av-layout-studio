@@ -30,7 +30,7 @@ import Cookies from "./pages/Cookies";
 import NotFound from "./pages/NotFound";
 import Favorites from "./pages/Favorites";
 
-export const ThemeContext = createContext<{ theme: string; toggleTheme: () => void }>({ theme: "dark", toggleTheme: () => {} });
+export const ThemeContext = createContext<{ theme: string; toggleTheme: () => void }>({ theme: "light", toggleTheme: () => {} });
 
 const queryClient = new QueryClient();
 

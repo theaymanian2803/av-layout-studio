@@ -1,18 +1,18 @@
-import { Camera, Award, Users, Globe, Heart, Zap } from "lucide-react";
+import { PawPrint, Award, Users, Globe, Heart, Bone } from "lucide-react";
 import { motion } from "framer-motion";
 
 const stats = [
-  { value: "10K+", label: "Products" },
+  { value: "500+", label: "Pet Essentials" },
   { value: "500K+", label: "Happy Customers" },
   { value: "50+", label: "Brands" },
   { value: "24/7", label: "Support" },
 ];
 
 const values = [
-  { icon: Award, title: "Quality First", description: "We only stock gear from trusted brands with proven track records." },
-  { icon: Users, title: "Customer Obsessed", description: "Your success is our success. We're here to help you create." },
-  { icon: Globe, title: "Global Reach", description: "Shipping worldwide with fast, reliable delivery partners." },
-  { icon: Heart, title: "Passion Driven", description: "Built by creators, for creators who demand the best." },
+  { icon: Award, title: "Quality First", description: "We select food and supplies from trusted makers with clear standards." },
+  { icon: Users, title: "Pet Parent Support", description: "Friendly help makes choosing the right everyday essentials easier." },
+  { icon: Globe, title: "Reliable Delivery", description: "Carefully packed pet favorites delivered quickly and reliably." },
+  { icon: Heart, title: "Pets at Heart", description: "Every product is chosen with comfort, play, and wellbeing in mind." },
 ];
 
 const About = () => (
@@ -22,13 +22,12 @@ const About = () => (
       <div className="container mx-auto px-4 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-            <Camera className="h-4 w-4 text-primary" />
-            <span className="text-sm font-semibold text-primary">About CineGear</span>
+             <PawPrint className="h-4 w-4 text-primary" />
+             <span className="text-sm font-semibold text-primary">About PetPaw</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black mb-6">Empowering Creators<br />Since 2015</h1>
+           <h1 className="text-4xl md:text-6xl font-black mb-6">Better Everyday Care<br />for Every Pet</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We started with a simple mission: make professional-grade equipment accessible to every creator, 
-            from weekend enthusiasts to Hollywood productions.
+             We make it easier for pet parents to find dependable food, joyful treats, and practical essentials in one welcoming place.
           </p>
         </motion.div>
       </div>
@@ -62,23 +61,19 @@ const About = () => (
             <h2 className="text-3xl font-bold mb-6">Our Story</h2>
             <div className="space-y-4 text-muted-foreground">
               <p>
-                CineGear was founded by a group of filmmakers frustrated with the lack of quality equipment 
-                retailers who truly understood the needs of creators. We knew there had to be a better way.
+                 PetPaw began with a simple belief: shopping for a pet should feel joyful, clear, and caring—not overwhelming.
               </p>
               <p>
-                Today, we're proud to serve over 500,000 creators worldwide—from YouTube content creators 
-                to Oscar-winning cinematographers. Our team of experts personally tests every product we sell 
-                to ensure it meets our exacting standards.
+                 Today, we bring together thoughtfully selected meals, treats, toys, and everyday supplies for dogs, cats, birds, fish, and small pets.
               </p>
               <p>
-                We're not just a store; we're a community of passionate creators dedicated to helping you 
-                tell your story with the best tools available.
+                 We are more than a store: we are pet people committed to making daily care simpler and every shared moment happier.
               </p>
             </div>
           </div>
           <div className="relative">
             <div className="aspect-video rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-              <Zap className="h-20 w-20 text-primary/50" />
+               <Bone className="h-20 w-20 text-primary/50" />
             </div>
           </div>
         </div>

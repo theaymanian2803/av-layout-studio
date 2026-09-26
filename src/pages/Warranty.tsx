@@ -12,7 +12,7 @@ const Warranty = () => (
         </div>
         <h1 className="text-4xl font-black mb-4">Warranty Information</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          All products sold by CineGear come with manufacturer warranties. We also offer extended protection plans for added peace of mind.
+           PetPaw supplies and accessories include the applicable manufacturer warranty, alongside our straightforward returns support.
         </p>
       </motion.div>
 
@@ -25,12 +25,12 @@ const Warranty = () => (
           </p>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
-              { category: "Cameras", duration: "1-2 Years" },
-              { category: "Lenses", duration: "1-5 Years" },
-              { category: "Audio Equipment", duration: "1-2 Years" },
-              { category: "Lighting", duration: "1-3 Years" },
-              { category: "Accessories", duration: "1 Year" },
-              { category: "Electronics", duration: "1 Year" },
+               { category: "Pet beds", duration: "1 Year" },
+               { category: "Feeders", duration: "1 Year" },
+               { category: "Grooming tools", duration: "1 Year" },
+               { category: "Travel gear", duration: "1 Year" },
+               { category: "Toys", duration: "90 Days" },
+               { category: "Electronics", duration: "1 Year" },
             ].map((item) => (
               <div key={item.category} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
                 <span className="font-medium">{item.category}</span>
